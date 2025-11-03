@@ -1,11 +1,92 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { GameBoard } from "@/components/GameBoard";
+import { Book, Heart, Sparkles } from "lucide-react";
 
 const Index = () => {
+  const [gameStarted, setGameStarted] = useState(false);
+
+  if (gameStarted) {
+    return <GameBoard onBackToHome={() => setGameStarted(false)} />;
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4 animate-fade-in">
+      <div className="max-w-4xl w-full space-y-12">
+        {/* Hero Section */}
+        <div className="text-center space-y-6">
+          <div className="flex justify-center mb-4">
+            <div className="p-6 bg-gradient-to-br from-primary to-accent rounded-full shadow-[var(--shadow-elevated)]">
+              <Book className="h-16 w-16 text-primary-foreground" />
+            </div>
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold text-foreground leading-tight">
+            Bible Match
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+            Test Your Knowledge of Biblical Connections
+          </p>
+        </div>
+
+        {/* Description Card */}
+        <Card className="p-8 shadow-[var(--shadow-elevated)] bg-gradient-to-br from-card to-card/90">
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold text-foreground text-center">
+              How to Play
+            </h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="text-center space-y-3">
+                <div className="flex justify-center">
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <Sparkles className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <h3 className="font-semibold text-foreground">Select Cards</h3>
+                <p className="text-sm text-muted-foreground">
+                  Click on two cards to form a pair
+                </p>
+              </div>
+              <div className="text-center space-y-3">
+                <div className="flex justify-center">
+                  <div className="p-3 bg-secondary/20 rounded-lg">
+                    <Heart className="h-8 w-8 text-secondary" />
+                  </div>
+                </div>
+                <h3 className="font-semibold text-foreground">Find Matches</h3>
+                <p className="text-sm text-muted-foreground">
+                  Match biblical names, places, and events that are connected
+                </p>
+              </div>
+              <div className="text-center space-y-3">
+                <div className="flex justify-center">
+                  <div className="p-3 bg-accent/20 rounded-lg">
+                    <Book className="h-8 w-8 text-accent" />
+                  </div>
+                </div>
+                <h3 className="font-semibold text-foreground">Learn Scripture</h3>
+                <p className="text-sm text-muted-foreground">
+                  Discover the story behind each connection with verse references
+                </p>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* CTA Button */}
+        <div className="text-center space-y-4">
+          <Button
+            variant="hero"
+            size="lg"
+            onClick={() => setGameStarted(true)}
+            className="px-12 py-6 text-lg"
+          >
+            Start Playing
+          </Button>
+          <p className="text-sm text-muted-foreground italic">
+            "Study to show thyself approved" — 2 Timothy 2:15
+          </p>
+        </div>
       </div>
     </div>
   );

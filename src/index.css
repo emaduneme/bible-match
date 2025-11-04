@@ -115,3 +115,31 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes move-up-scale {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-10px) scale(0.98); opacity: 0.95; }
+  }
+  .animate-move-up {
+    animation: move-up-scale 0.25s ease-out both;
+  }
+
+  @keyframes shake-soft {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    75% { transform: translateX(-2px); }
+  }
+  .animate-shake-soft {
+    animation: shake-soft 0.25s ease-in-out;
+  }
+
+  @keyframes fade-scale-in {
+    0% { transform: scale(0.98); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .animate-fade-scale-in {
+    animation: fade-scale-in 0.2s ease-out;
+  }
+}

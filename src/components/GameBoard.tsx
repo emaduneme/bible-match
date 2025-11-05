@@ -3,6 +3,7 @@ import { MatchCard } from "./MatchCard";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { VictoryScreen } from "./VictoryScreen";
 import { matchPairs, MatchPair } from "@/data/matchPairs";
+import { getPairsForTheme, ThemeId } from "@/data/themes";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft } from "lucide-react";
@@ -11,6 +12,7 @@ import { Card } from "@/components/ui/card";
 
 interface GameBoardProps {
   onBackToHome: () => void;
+  themeId?: ThemeId;
 }
 
 interface CardItem {
@@ -19,7 +21,7 @@ interface CardItem {
   pairId: number;
 }
 
-export const GameBoard = ({ onBackToHome }: GameBoardProps) => {
+export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
   const [cards, setCards] = useState<CardItem[]>([]);
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const [matchedPairs, setMatchedPairs] = useState<number[]>([]);
@@ -38,8 +40,9 @@ export const GameBoard = ({ onBackToHome }: GameBoardProps) => {
   }, []);
 
   const initializeGame = () => {
-    // Pick 5 random pairs for this game
-    const shuffledPairs = [...matchPairs].sort(() => Math.random() - 0.5).slice(0, 5);
+    // Choose pairs by theme (or all), cap to 5
+    const sourcePairs = themeId ? getPairsForTheme(themeId, matchPairs) : matchPairs;
+    const shuffledPairs = [...sourcePairs].sort(() => Math.random() - 0.5).slice(0, 5);
     setGamePairs(shuffledPairs);
 
     const gameCards: CardItem[] = [];
@@ -55,7 +58,7 @@ export const GameBoard = ({ onBackToHome }: GameBoardProps) => {
     setSelectedCards([]);
     setScore(0);
     setGameComplete(false);
-    setAttemptsLeft(5);
+    setAttemptsLeft(Math.min(5, shuffledPairs.length || 5));
     setGameOver(false);
   };
 
@@ -129,6 +132,7 @@ export const GameBoard = ({ onBackToHome }: GameBoardProps) => {
   };
 
   const totalPairs = gamePairs.length || 5;
+  const maxAttempts = Math.min(5, totalPairs);
   const progress = (matchedPairs.length / totalPairs) * 100;
 
   if (gameComplete) {
@@ -172,7 +176,7 @@ export const GameBoard = ({ onBackToHome }: GameBoardProps) => {
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Attempts</span>
                 <div className="flex gap-1">
-                  {[0,1,2,3,4].map((i) => (
+                  {Array.from({ length: maxAttempts }).map((_, i) => (
                     <Badge key={i} variant={i < attemptsLeft ? "default" : "secondary"} className="px-2">
                       {i < attemptsLeft ? "●" : "○"}
                     </Badge>

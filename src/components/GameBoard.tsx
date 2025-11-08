@@ -136,7 +136,7 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
   const progress = (matchedPairs.length / totalPairs) * 100;
 
   if (gameComplete) {
-    return <VictoryScreen score={score} totalPairs={totalPairs} onRestart={handleRestart} />;
+    return <VictoryScreen score={score} totalPairs={totalPairs} onRestart={handleRestart} theme={themeId} />;
   }
 
   if (gameOver) {
@@ -188,23 +188,32 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
             </div>
           </div>
           {/* Selection box at the top with two slots */}
-          <div className="bg-card border rounded-md p-4 shadow-sm">
+          <div className="bg-accent/10 border border-accent/30 rounded-md p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm font-medium text-foreground">Choose a matching pair</div>
               {recentMiss && (
                 <Badge variant="destructive" className="text-xs">{recentMiss} returned</Badge>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               {[0,1].map((idx) => {
                 const id = selectedCards[idx];
                 const c = id ? cards.find((x) => x.id === id) : undefined;
                 return (
-                  <Card key={idx} className="h-12 md:h-14 flex items-center justify-center border-dashed">
-                    <span className={cn("text-sm md:text-base text-foreground/90", c && "animate-fade-scale-in") }>
-                      {c ? c.name : (idx === 0 ? "First" : "Second")}
-                    </span>
-                  </Card>
+                  <div key={idx} className="space-y-1">
+                    <div className="text-xs font-medium text-center" style={{ color: idx === 0 ? "hsl(42 78% 55%)" : "hsl(210 55% 70%)" }}>
+                      {idx === 0 ? "FIRST" : "SECOND"}
+                    </div>
+                    <Card className={cn(
+                      "h-14 md:h-16 flex items-center justify-center border-2 transition-all",
+                      idx === 0 ? "border-primary/60 bg-primary/5" : "border-secondary/60 bg-secondary/5",
+                      c && "shadow-[var(--shadow-elevated)]"
+                    )}>
+                      <span className={cn("text-base md:text-lg font-medium", c && "animate-fade-scale-in")}>
+                        {c ? c.name : "—"}
+                      </span>
+                    </Card>
+                  </div>
                 );
               })}
             </div>

@@ -1,14 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trophy } from "lucide-react";
+import { Trophy, Share2 } from "lucide-react";
+import { saveGameResult, getStats, getShareText } from "@/lib/storage";
+import { useEffect, useState } from "react";
 
 interface VictoryScreenProps {
   score: number;
   totalPairs: number;
   onRestart: () => void;
+  theme?: string;
 }
 
-export const VictoryScreen = ({ score, totalPairs, onRestart }: VictoryScreenProps) => {
+export const VictoryScreen = ({ score, totalPairs, onRestart, theme = "Mixed" }: VictoryScreenProps) => {
+  const [stats, setStats] = useState(getStats());
+
+  useEffect(() => {
+    saveGameResult(score === totalPairs);
+    setStats(getStats());
+  }, [score, totalPairs]);
+
+  const handleShare = async () => {
+    const text = getShareText(score, totalPairs, theme);
+    if (navigator.share) {
+      await navigator.share({ text });
+    } else {
+      await navigator.clipboard.writeText(text);
+      alert("Results copied to clipboard!");
+    }
+  };
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-primary/5 animate-fade-in">
       <Card className="max-w-lg w-full p-8 text-center space-y-6 shadow-[var(--shadow-elevated)]">
@@ -30,9 +49,19 @@ export const VictoryScreen = ({ score, totalPairs, onRestart }: VictoryScreenPro
           </p>
           <p className="text-xs text-muted-foreground">— Proverbs 2:6</p>
         </div>
-        <Button variant="hero" size="lg" onClick={onRestart} className="w-full">
-          Play Again
-        </Button>
+        <div className="pt-2 space-y-1 text-sm text-muted-foreground">
+          <div>🔥 {stats.streak} day streak</div>
+          <div>{stats.gamesWon}/{stats.gamesPlayed} wins</div>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="lg" onClick={handleShare} className="flex-1">
+            <Share2 className="mr-2 h-4 w-4" />
+            Share
+          </Button>
+          <Button variant="hero" size="lg" onClick={onRestart} className="flex-1">
+            Play Again
+          </Button>
+        </div>
       </Card>
     </div>
   );

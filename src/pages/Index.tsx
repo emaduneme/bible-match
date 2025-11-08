@@ -15,8 +15,8 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4 animate-fade-in">
-      <div className="max-w-4xl w-full space-y-12">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-3 md:p-4 animate-fade-in">
+      <div className="max-w-4xl w-full space-y-10 md:space-y-12">
         {/* Hero Section */}
         <div className="text-center space-y-6">
           <div className="flex justify-center mb-4">

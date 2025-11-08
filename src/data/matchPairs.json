@@ -1,0 +1,381 @@
+[
+  {
+    "id": 301,
+    "type": "pair",
+    "a": "Moses",
+    "b": "Aaron",
+    "relationship": "brothers",
+    "verse": "Exodus 4:27",
+    "note": "Aaron met Moses at Sinai and joined his mission."
+  },
+  {
+    "id": 302,
+    "type": "pair",
+    "a": "Jacob",
+    "b": "Egypt",
+    "relationship": "exile",
+    "verse": "Genesis 46:6",
+    "note": "Jacob’s family relocated to Egypt for survival."
+  },
+  {
+    "id": 303,
+    "type": "pair",
+    "a": "Joseph",
+    "b": "Benjamin",
+    "relationship": "brothers",
+    "verse": "Genesis 45:14",
+    "note": "Joseph wept as he embraced his youngest brother."
+  },
+  {
+    "id": 304,
+    "type": "pair",
+    "a": "Caleb",
+    "b": "Joshua",
+    "relationship": "companions",
+    "verse": "Numbers 14:38",
+    "note": "Both remained faithful after spying out Canaan."
+  },
+  {
+    "id": 305,
+    "type": "pair",
+    "a": "Joshua",
+    "b": "Jordan River",
+    "relationship": "miracle",
+    "verse": "Joshua 3:17",
+    "note": "The river parted so Israel crossed on dry ground."
+  },
+  {
+    "id": 306,
+    "type": "pair",
+    "a": "Rahab",
+    "b": "Scarlet Cord",
+    "relationship": "symbol",
+    "verse": "Joshua 2:18",
+    "note": "The cord marked her house for safety during battle."
+  },
+  {
+    "id": 307,
+    "type": "pair",
+    "a": "Ruth",
+    "b": "Naomi",
+    "relationship": "family_loyalty",
+    "verse": "Ruth 1:16",
+    "note": "Ruth refused to leave Naomi’s side in hardship."
+  },
+  {
+    "id": 308,
+    "type": "pair",
+    "a": "Boaz",
+    "b": "Ruth",
+    "relationship": "mission",
+    "verse": "Ruth 4:13",
+    "note": "Boaz married Ruth and continued Naomi’s family line."
+  },
+  {
+    "id": 309,
+    "type": "pair",
+    "a": "Samuel",
+    "b": "Eli",
+    "relationship": "mentor",
+    "verse": "1 Samuel 3:9",
+    "note": "Eli taught Samuel how to respond to God’s call."
+  },
+  {
+    "id": 310,
+    "type": "pair",
+    "a": "Jonathan",
+    "b": "David",
+    "relationship": "friendship",
+    "verse": "1 Samuel 18:3",
+    "note": "Jonathan made a covenant of friendship with David."
+  },
+  {
+    "id": 311,
+    "type": "pair",
+    "a": "Elijah",
+    "b": "Mount Carmel",
+    "relationship": "miracle",
+    "verse": "1 Kings 18:38",
+    "note": "Fire from heaven consumed Elijah’s altar."
+  },
+  {
+    "id": 312,
+    "type": "pair",
+    "a": "Elisha",
+    "b": "Naaman",
+    "relationship": "healing",
+    "verse": "2 Kings 5:14",
+    "note": "Elisha’s word cured Naaman’s leprosy."
+  },
+  {
+    "id": 313,
+    "type": "pair",
+    "a": "Solomon",
+    "b": "Wisdom",
+    "relationship": "virtue",
+    "verse": "1 Kings 3:12",
+    "note": "God gave Solomon wisdom beyond measure."
+  },
+  {
+    "id": 314,
+    "type": "pair",
+    "a": "Job",
+    "b": "Patience",
+    "relationship": "virtue",
+    "verse": "James 5:11",
+    "note": "Job’s endurance is praised under trial."
+  },
+  {
+    "id": 315,
+    "type": "pair",
+    "a": "David",
+    "b": "Psalter",
+    "relationship": "object",
+    "verse": "Psalm 23:1",
+    "note": "David authored many psalms used in worship."
+  },
+  {
+    "id": 316,
+    "type": "pair",
+    "a": "Isaiah",
+    "b": "Hezekiah",
+    "relationship": "leader_of_event",
+    "verse": "2 Kings 19:20",
+    "note": "Isaiah brought God’s word to Hezekiah."
+  },
+  {
+    "id": 317,
+    "type": "pair",
+    "a": "Jeremiah",
+    "b": "Baruch",
+    "relationship": "missionary_partners",
+    "verse": "Jeremiah 36:4",
+    "note": "Baruch served as Jeremiah’s scribe."
+  },
+  {
+    "id": 318,
+    "type": "pair",
+    "a": "Daniel",
+    "b": "Lions’ Den",
+    "relationship": "miracle",
+    "verse": "Daniel 6:22",
+    "note": "God shut the lions’ mouths to protect Daniel."
+  },
+  {
+    "id": 319,
+    "type": "pair",
+    "a": "Jonah",
+    "b": "Nineveh",
+    "relationship": "mission",
+    "verse": "Jonah 3:3",
+    "note": "Jonah preached repentance to Nineveh."
+  },
+  {
+    "id": 320,
+    "type": "pair",
+    "a": "Hosea",
+    "b": "Gomer",
+    "relationship": "family_loyalty",
+    "verse": "Hosea 1:2",
+    "note": "God told Hosea to marry an unfaithful wife."
+  },
+  {
+    "id": 321,
+    "type": "pair",
+    "a": "Nahum",
+    "b": "Nineveh",
+    "relationship": "preaching",
+    "verse": "Nahum 1:1",
+    "note": "Nahum foretold Nineveh’s coming judgment."
+  },
+  {
+    "id": 322,
+    "type": "pair",
+    "a": "Matthew",
+    "b": "Tax Booth",
+    "relationship": "conversion",
+    "verse": "Matthew 9:9",
+    "note": "Matthew left his tax booth to follow Jesus."
+  },
+  {
+    "id": 323,
+    "type": "pair",
+    "a": "Peter",
+    "b": "Water",
+    "relationship": "miracle",
+    "verse": "Matthew 14:29",
+    "note": "Peter briefly walked on water toward Jesus."
+  },
+  {
+    "id": 324,
+    "type": "pair",
+    "a": "Blind Man",
+    "b": "Pool of Siloam",
+    "relationship": "healing",
+    "verse": "John 9:7",
+    "note": "Jesus sent him to wash and receive sight."
+  },
+  {
+    "id": 325,
+    "type": "pair",
+    "a": "Martha",
+    "b": "Mary",
+    "relationship": "sisters",
+    "verse": "Luke 10:38-42",
+    "note": "Martha served while Mary listened to Jesus."
+  },
+  {
+    "id": 326,
+    "type": "pair",
+    "a": "Zacchaeus",
+    "b": "Sycamore Tree",
+    "relationship": "strategy",
+    "verse": "Luke 19:4",
+    "note": "He climbed the tree to see Jesus pass by."
+  },
+  {
+    "id": 327,
+    "type": "pair",
+    "a": "Centurion",
+    "b": "Servant",
+    "relationship": "healing",
+    "verse": "Matthew 8:13",
+    "note": "Jesus healed the servant from afar."
+  },
+  {
+    "id": 328,
+    "type": "pair",
+    "a": "Mary Magdalene",
+    "b": "Empty Tomb",
+    "relationship": "location",
+    "verse": "John 20:1",
+    "note": "She discovered the empty tomb at dawn."
+  },
+  {
+    "id": 329,
+    "type": "pair",
+    "a": "Peter",
+    "b": "Pentecost",
+    "relationship": "preaching",
+    "verse": "Acts 2:14",
+    "note": "Peter preached to the crowds at Pentecost."
+  },
+  {
+    "id": 330,
+    "type": "pair",
+    "a": "Barnabas",
+    "b": "Paul",
+    "relationship": "missionary_partners",
+    "verse": "Acts 13:2",
+    "note": "The Spirit set them apart for mission together."
+  },
+  {
+    "id": 331,
+    "type": "pair",
+    "a": "Lydia",
+    "b": "Philippi",
+    "relationship": "conversion",
+    "verse": "Acts 16:14-15",
+    "note": "She believed and opened her home to the team."
+  },
+  {
+    "id": 332,
+    "type": "pair",
+    "a": "Silas",
+    "b": "Prison",
+    "relationship": "miracle",
+    "verse": "Acts 16:25-26",
+    "note": "An earthquake freed them at midnight prayer."
+  },
+  {
+    "id": 333,
+    "type": "pair",
+    "a": "Paul",
+    "b": "Timothy",
+    "relationship": "mentor",
+    "verse": "2 Timothy 1:2",
+    "note": "Paul calls Timothy his true son in the faith."
+  },
+  {
+    "id": 334,
+    "type": "pair",
+    "a": "Priscilla",
+    "b": "Aquila",
+    "relationship": "missionary_partners",
+    "verse": "Acts 18:2-3",
+    "note": "They worked and taught together in every city."
+  },
+  {
+    "id": 335,
+    "type": "pair",
+    "a": "Apollos",
+    "b": "Ephesus",
+    "relationship": "preaching",
+    "verse": "Acts 18:24-25",
+    "note": "Apollos taught accurately about Jesus there."
+  },
+  {
+    "id": 336,
+    "type": "pair",
+    "a": "Titus",
+    "b": "Crete",
+    "relationship": "mission",
+    "verse": "Titus 1:5",
+    "note": "Paul left Titus to organize the churches."
+  },
+  {
+    "id": 337,
+    "type": "pair",
+    "a": "Onesimus",
+    "b": "Philemon",
+    "relationship": "family_loyalty",
+    "verse": "Philemon 1:10",
+    "note": "Paul pleaded for forgiveness and restoration."
+  },
+  {
+    "id": 338,
+    "type": "pair",
+    "a": "Peter",
+    "b": "Boldness",
+    "relationship": "virtue",
+    "verse": "1 Peter 3:15",
+    "note": "Be ready to give an answer for your hope."
+  },
+  {
+    "id": 339,
+    "type": "pair",
+    "a": "James",
+    "b": "Trials",
+    "relationship": "virtue",
+    "verse": "James 1:2",
+    "note": "Count trials joy because they produce endurance."
+  },
+  {
+    "id": 340,
+    "type": "pair",
+    "a": "John",
+    "b": "Love",
+    "relationship": "virtue",
+    "verse": "1 John 4:7",
+    "note": "Let us love one another, for love is from God."
+  },
+  {
+    "id": 341,
+    "type": "pair",
+    "a": "Seven Churches",
+    "b": "Asia Minor",
+    "relationship": "location",
+    "verse": "Revelation 1:11",
+    "note": "John writes to seven churches in Asia."
+  },
+  {
+    "id": 342,
+    "type": "pair",
+    "a": "Lamb",
+    "b": "Scroll",
+    "relationship": "symbol",
+    "verse": "Revelation 5:7",
+    "note": "The Lamb alone is worthy to open the scroll."
+  }
+]
+

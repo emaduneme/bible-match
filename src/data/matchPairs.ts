@@ -8,7 +8,8 @@ export interface MatchPair {
   note: string;
 }
 
-export const matchPairs: MatchPair[] = [
+// Base seed pairs kept in-code
+const basePairs: MatchPair[] = [
   {
     id: 1,
     type: "pair",
@@ -100,3 +101,9 @@ export const matchPairs: MatchPair[] = [
     note: "Paul referred to Timothy as his true son in the faith.",
   },
 ];
+
+// Load additional pairs from JSON (externalized content)
+import EXTRA from "./matchPairs.json";
+const extraPairs = EXTRA as unknown as MatchPair[];
+
+export const matchPairs: MatchPair[] = [...basePairs, ...extraPairs];

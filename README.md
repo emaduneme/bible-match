@@ -1,73 +1,113 @@
-# Welcome to your Lovable project
+# Bible Link Match 🕊️
 
-## Project info
+An interactive Bible-themed matching game that helps players learn about biblical connections between people, places, and events. Test your knowledge of Scripture by matching related pairs and discover verses that illuminate each connection!
 
-**URL**: https://lovable.dev/projects/bcd24a0c-3b31-44e2-bb9f-f78c3b74b479
+## 🎮 Game Features
 
-## How can I edit this code?
+- **Multiple Themes**: Choose from different categories including:
+  - People & Relationships (mentors, siblings, companions)
+  - People & Places (origins, missions, revelations)
+  - People & Events (battles, miracles, divine calls)
+  - Old Testament pairs
+  - New Testament pairs
 
-There are several ways of editing your application.
+- **Educational Feedback**: Each correct match reveals a relevant Bible verse and explanatory note
+- **Score Tracking**: Monitor your progress with a visual progress bar
+- **Limited Attempts**: Strategic gameplay with 5 attempts per game
+- **Responsive Design**: Beautiful, mobile-first interface that works on all devices
+- **Modern UI**: Smooth animations and elegant design using shadcn-ui components
 
-**Use Lovable**
+## 🚀 Getting Started
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/bcd24a0c-3b31-44e2-bb9f-f78c3b74b479) and start prompting.
+### Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+- Node.js (v16 or higher)
+- npm or yarn
 
-**Use your preferred IDE**
+### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Clone the repository
+git clone https://github.com/emaduneme/bible-match.git
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Navigate to the project directory
+cd bible-match
 
-Follow these steps:
+# Install dependencies
+npm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The game will open in your browser at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🛠️ Tech Stack
 
-**Use GitHub Codespaces**
+- **React 18** - Modern React with hooks
+- **TypeScript** - Type-safe development
+- **Vite** - Lightning-fast build tool
+- **Tailwind CSS** - Utility-first CSS framework
+- **shadcn-ui** - Beautiful, accessible component library
+- **React Router** - Client-side routing
+- **Lucide React** - Icon library
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 📁 Project Structure
 
-## What technologies are used for this project?
+```
+bible-match/
+├── src/
+│   ├── components/
+│   │   ├── GameBoard.tsx      # Main game logic and UI
+│   │   ├── MatchCard.tsx      # Individual card component
+│   │   ├── FeedbackDialog.tsx # Success/feedback modal
+│   │   └── VictoryScreen.tsx  # End-game screen
+│   ├── data/
+│   │   ├── matchPairs.json    # Bible pairs with verses
+│   │   ├── themes.json        # Game theme categories
+│   │   └── books.json         # Bible book metadata
+│   ├── pages/
+│   │   ├── Index.tsx          # Home/landing page
+│   │   └── NotFound.tsx       # 404 page
+│   └── lib/
+│       ├── utils.ts           # Utility functions
+│       └── storage.ts         # Local storage helpers
+├── public/                    # Static assets
+└── package.json
+```
 
-This project is built with:
+## 🎯 How to Play
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. **Choose a Theme**: Select from various biblical themes or play with all pairs
+2. **Match Pairs**: Click two cards to see if they match
+3. **Learn**: When you make a correct match, discover the Bible verse that connects them
+4. **Score Points**: Complete all pairs before running out of attempts
+5. **Victory**: Achieve a perfect score and challenge yourself with a new theme!
 
-## How can I deploy this project?
+## 🤝 Contributing
 
-Simply open [Lovable](https://lovable.dev/projects/bcd24a0c-3b31-44e2-bb9f-f78c3b74b479) and click on Share -> Publish.
+Contributions are welcome! Feel free to:
+- Add new Bible pairs and themes
+- Improve the UI/UX
+- Fix bugs or optimize performance
+- Enhance documentation
 
-## Can I connect a custom domain to my Lovable project?
+## 📝 License
 
-Yes, you can!
+This project is open source and available under the MIT License.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🙏 Acknowledgments
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- Bible verses and content sourced from various Bible translations
+- Built with modern web technologies and best practices
+- Designed with accessibility and user experience in mind
+
+## 📧 Contact
+
+Emmanuel Aduneme - [@emaduneme](https://github.com/emaduneme)
+
+Project Link: [https://github.com/emaduneme/bible-match](https://github.com/emaduneme/bible-match)
+
+---
+
+**Made with ❤️ to help people engage with Scripture in a fun, interactive way!**

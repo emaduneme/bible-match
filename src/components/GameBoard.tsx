@@ -153,7 +153,7 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 p-4 md:p-8 animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 p-3 md:p-6 animate-fade-in">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 space-y-4">
             <div className="flex items-center justify-between">

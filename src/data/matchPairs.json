@@ -376,6 +376,303 @@
     "relationship": "symbol",
     "verse": "Revelation 5:7",
     "note": "The Lamb alone is worthy to open the scroll."
+  },
+  {
+    "id": 343,
+    "type": "pair",
+    "a": "Abram",
+    "b": "Ur of the Chaldeans",
+    "relationship": "origin",
+    "verse": "Genesis 11:31",
+    "note": "Abram came from Ur of the Chaldeans."
+  },
+  {
+    "id": 344,
+    "type": "pair",
+    "a": "Moses",
+    "b": "Mount Horeb",
+    "relationship": "revelation",
+    "verse": "Exodus 3:1-2",
+    "note": "God revealed himself to Moses at the burning bush."
+  },
+  {
+    "id": 345,
+    "type": "pair",
+    "a": "Jesus",
+    "b": "Nazareth",
+    "relationship": "hometown",
+    "verse": "Luke 4:16",
+    "note": "Jesus was brought up in Nazareth."
+  },
+  {
+    "id": 346,
+    "type": "pair",
+    "a": "David",
+    "b": "Jerusalem",
+    "relationship": "kingship",
+    "verse": "2 Samuel 5:5",
+    "note": "David reigned as king from Jerusalem."
+  },
+  {
+    "id": 347,
+    "type": "pair",
+    "a": "Abraham",
+    "b": "Cave of Machpelah",
+    "relationship": "resting_place",
+    "verse": "Genesis 25:9-10",
+    "note": "Abraham was buried in the cave of Machpelah at Hebron."
+  },
+  {
+    "id": 348,
+    "type": "pair",
+    "a": "David",
+    "b": "Goliath",
+    "relationship": "victory",
+    "verse": "1 Samuel 17:50",
+    "note": "David defeated the Philistine champion."
+  },
+  {
+    "id": 349,
+    "type": "pair",
+    "a": "Joshua",
+    "b": "Jericho",
+    "relationship": "battle",
+    "verse": "Joshua 6:20",
+    "note": "The walls fell and Israel took the city."
+  },
+  {
+    "id": 350,
+    "type": "pair",
+    "a": "Moses",
+    "b": "Egypt",
+    "relationship": "departure",
+    "verse": "Exodus 12:37",
+    "note": "Israel departed from Egypt under Moses."
+  },
+  {
+    "id": 351,
+    "type": "pair",
+    "a": "Samuel",
+    "b": "God's call",
+    "relationship": "divine_call",
+    "verse": "1 Samuel 3:10",
+    "note": "The Lord called Samuel by name at night."
+  },
+  {
+    "id": 352,
+    "type": "pair",
+    "a": "Elijah",
+    "b": "Elisha",
+    "relationship": "mentor",
+    "verse": "2 Kings 2:9",
+    "note": "Elisha requested a double portion of Elijah's spirit."
+  },
+  {
+    "id": 353,
+    "type": "pair",
+    "a": "Naomi",
+    "b": "Orpah",
+    "relationship": "family_loyalty",
+    "verse": "Ruth 1:14",
+    "note": "Orpah kissed her mother-in-law goodbye."
+  },
+  {
+    "id": 354,
+    "type": "pair",
+    "a": "Abraham",
+    "b": "Lot",
+    "relationship": "uncle_nephew",
+    "verse": "Genesis 13:8",
+    "note": "Abraham and Lot were kinsmen who separated peacefully."
+  },
+  {
+    "id": 355,
+    "type": "pair",
+    "a": "Mary",
+    "b": "Elizabeth",
+    "relationship": "family_loyalty",
+    "verse": "Luke 1:39-40",
+    "note": "Mary visited her cousin Elizabeth during pregnancy."
+  },
+  {
+    "id": 356,
+    "type": "pair",
+    "a": "Paul",
+    "b": "Luke",
+    "relationship": "companions",
+    "verse": "2 Timothy 4:11",
+    "note": "Luke remained with Paul to the end."
+  },
+  {
+    "id": 357,
+    "type": "pair",
+    "a": "Peter",
+    "b": "John",
+    "relationship": "companions",
+    "verse": "Acts 3:1",
+    "note": "Peter and John went to the temple together."
+  },
+  {
+    "id": 358,
+    "type": "pair",
+    "a": "Mordecai",
+    "b": "Esther",
+    "relationship": "uncle_nephew",
+    "verse": "Esther 2:7",
+    "note": "Mordecai raised his cousin Esther as his daughter."
+  },
+  {
+    "id": 359,
+    "type": "pair",
+    "a": "Jacob",
+    "b": "Esau",
+    "relationship": "brothers",
+    "verse": "Genesis 25:24-26",
+    "note": "Twin brothers who struggled even in the womb."
+  },
+  {
+    "id": 360,
+    "type": "pair",
+    "a": "Cain",
+    "b": "Abel",
+    "relationship": "brothers",
+    "verse": "Genesis 4:8",
+    "note": "The first brothers, whose rivalry ended in tragedy."
+  },
+  {
+    "id": 361,
+    "type": "pair",
+    "a": "Paul",
+    "b": "Silas",
+    "relationship": "missionary_partners",
+    "verse": "Acts 15:40",
+    "note": "Paul chose Silas for his second missionary journey."
+  },
+  {
+    "id": 362,
+    "type": "pair",
+    "a": "Jesus",
+    "b": "Bethlehem",
+    "relationship": "origin",
+    "verse": "Matthew 2:1",
+    "note": "Jesus was born in Bethlehem of Judea."
+  },
+  {
+    "id": 363,
+    "type": "pair",
+    "a": "Paul",
+    "b": "Damascus Road",
+    "relationship": "conversion",
+    "verse": "Acts 9:3-4",
+    "note": "Paul encountered Jesus on the road to Damascus."
+  },
+  {
+    "id": 364,
+    "type": "pair",
+    "a": "Jacob",
+    "b": "Bethel",
+    "relationship": "revelation",
+    "verse": "Genesis 28:12-13",
+    "note": "Jacob saw the ladder to heaven at Bethel."
+  },
+  {
+    "id": 365,
+    "type": "pair",
+    "a": "Moses",
+    "b": "Nebo",
+    "relationship": "resting_place",
+    "verse": "Deuteronomy 34:5-6",
+    "note": "Moses died on Mount Nebo and was buried there."
+  },
+  {
+    "id": 366,
+    "type": "pair",
+    "a": "Solomon",
+    "b": "Jerusalem Temple",
+    "relationship": "kingship",
+    "verse": "1 Kings 6:1",
+    "note": "Solomon built the temple in Jerusalem."
+  },
+  {
+    "id": 367,
+    "type": "pair",
+    "a": "Gideon",
+    "b": "Midianites",
+    "relationship": "victory",
+    "verse": "Judges 7:21-22",
+    "note": "Gideon's 300 routed the Midianite army."
+  },
+  {
+    "id": 368,
+    "type": "pair",
+    "a": "Samson",
+    "b": "Philistines",
+    "relationship": "battle",
+    "verse": "Judges 15:15",
+    "note": "Samson struck down a thousand Philistines."
+  },
+  {
+    "id": 369,
+    "type": "pair",
+    "a": "Elijah",
+    "b": "Ascension",
+    "relationship": "departure",
+    "verse": "2 Kings 2:11",
+    "note": "Elijah was taken up to heaven in a whirlwind."
+  },
+  {
+    "id": 370,
+    "type": "pair",
+    "a": "Isaiah",
+    "b": "Temple Vision",
+    "relationship": "divine_call",
+    "verse": "Isaiah 6:8",
+    "note": "Isaiah answered God's call saying 'Here am I, send me.'"
+  },
+  {
+    "id": 371,
+    "type": "pair",
+    "a": "Philip",
+    "b": "Ethiopian Eunuch",
+    "relationship": "conversion",
+    "verse": "Acts 8:35-38",
+    "note": "Philip baptized the Ethiopian on the road."
+  },
+  {
+    "id": 372,
+    "type": "pair",
+    "a": "Woman at Well",
+    "b": "Jacob's Well",
+    "relationship": "revelation",
+    "verse": "John 4:25-26",
+    "note": "Jesus revealed himself as Messiah at the well."
+  },
+  {
+    "id": 373,
+    "type": "pair",
+    "a": "Peter",
+    "b": "Cornelius",
+    "relationship": "divine_call",
+    "verse": "Acts 10:19-20",
+    "note": "The Spirit told Peter to go to Cornelius."
+  },
+  {
+    "id": 374,
+    "type": "pair",
+    "a": "Deborah",
+    "b": "Barak",
+    "relationship": "battle",
+    "verse": "Judges 4:14",
+    "note": "Deborah led Barak into battle against Sisera."
+  },
+  {
+    "id": 375,
+    "type": "pair",
+    "a": "Stephen",
+    "b": "Sanhedrin",
+    "relationship": "preaching",
+    "verse": "Acts 7:2",
+    "note": "Stephen preached before the Jewish council."
   }
 ]
 

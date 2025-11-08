@@ -6,21 +6,9 @@ export type ThemeId =
   | "people"
   | "people_places"
   | "people_events"
-  | "virtues"
-  | "events_symbols"
   // Canon/category-based themes
   | "ot"
-  | "nt"
-  | "pentateuch"
-  | "historical"
-  | "wisdom"
-  | "major_prophets"
-  | "minor_prophets"
-  | "gospels"
-  | "acts"
-  | "pauline"
-  | "general_epistles"
-  | "revelation";
+  | "nt";
 
 export interface Theme {
   id: ThemeId;
@@ -79,31 +67,9 @@ export const THEMES: Theme[] = [
       "divine_call",
     ],
   },
-  {
-    id: "virtues",
-    title: "Virtues",
-    description: "Characters associated with key virtues.",
-    relationships: ["virtue"],
-  },
-  {
-    id: "events_symbols",
-    title: "Events, Symbols & Locations",
-    description: "Events with places, signs and strategies.",
-    relationships: ["location", "object", "symbol", "strategy"],
-  },
   // Canon/category-based themes
   { id: "ot", title: "Old Testament", description: "Pairs from the Old Testament.", testament: "OT" },
   { id: "nt", title: "New Testament", description: "Pairs from the New Testament.", testament: "NT" },
-  { id: "pentateuch", title: "Pentateuch", description: "Genesis–Deuteronomy.", collections: ["Pentateuch"] },
-  { id: "historical", title: "Historical Books", description: "Joshua–Esther.", collections: ["Historical"] },
-  { id: "wisdom", title: "Wisdom Books", description: "Job–Song of Solomon.", collections: ["Wisdom"] },
-  { id: "major_prophets", title: "Major Prophets", description: "Isaiah–Daniel.", collections: ["Major Prophets"] },
-  { id: "minor_prophets", title: "Minor Prophets", description: "Hosea–Malachi.", collections: ["Minor Prophets"] },
-  { id: "gospels", title: "Gospels", description: "Matthew, Mark, Luke, John.", collections: ["Gospels"] },
-  { id: "acts", title: "Acts", description: "The early church.", collections: ["Acts"] },
-  { id: "pauline", title: "Pauline Epistles", description: "Romans–Philemon.", collections: ["Pauline Epistles"] },
-  { id: "general_epistles", title: "General Epistles", description: "Hebrews–Jude.", collections: ["General Epistles"] },
-  { id: "revelation", title: "Revelation", description: "Apocalypse of John.", collections: ["Revelation"] },
 ];
 
 export function getPairsForTheme(themeId: ThemeId, all: MatchPair[]): MatchPair[] {
@@ -124,6 +90,13 @@ export function getPairsForTheme(themeId: ThemeId, all: MatchPair[]): MatchPair[
       return false;
     }
     return true;
+  });
+}
+
+export function getThemesWithPairs(all: MatchPair[]): Theme[] {
+  return THEMES.filter((theme) => {
+    const pairs = getPairsForTheme(theme.id, all);
+    return pairs.length > 0;
   });
 }
 

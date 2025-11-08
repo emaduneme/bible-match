@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { GameBoard } from "@/components/GameBoard";
 import { Book, Heart, Sparkles } from "lucide-react";
-import { THEMES, ThemeId } from "@/data/themes";
+import { getThemesWithPairs, ThemeId } from "@/data/themes";
+import { matchPairs } from "@/data/matchPairs";
 import { cn } from "@/lib/utils";
 
 const Index = () => {
@@ -80,7 +81,7 @@ const Index = () => {
         <Card className="p-6 bg-gradient-to-br from-card to-card/90 shadow-[var(--shadow-elevated)]">
           <h2 className="text-xl font-semibold mb-4">Choose a Theme</h2>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {THEMES.map((t) => (
+            {getThemesWithPairs(matchPairs).map((t) => (
               <button
                 key={t.id}
                 type="button"

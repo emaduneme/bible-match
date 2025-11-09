@@ -50,7 +50,7 @@ export const VictoryScreen = ({ score, totalPairs, onRestart, theme = "Mixed" }:
           <p className="text-xs text-muted-foreground">— Proverbs 2:6</p>
         </div>
         <div className="pt-2 space-y-1 text-sm text-muted-foreground">
-          <div>🔥 {stats.streak} day streak</div>
+          <div>{stats.streak} day streak</div>
           <div>{stats.gamesWon}/{stats.gamesPlayed} wins</div>
         </div>
         <div className="flex gap-2">

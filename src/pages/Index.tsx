@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { GameBoard } from "@/components/GameBoard";
-import { Book, Heart, Sparkles } from "lucide-react";
+import { Book } from "lucide-react";
 import { getThemesWithPairs, ThemeId } from "@/data/themes";
 import { matchPairs } from "@/data/matchPairs";
 import { cn } from "@/lib/utils";
@@ -41,33 +41,18 @@ const Index = () => {
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center space-y-3">
-                <div className="flex justify-center">
-                  <div className="p-3 bg-primary/10 rounded-lg">
-                    <Sparkles className="h-8 w-8 text-primary" />
-                  </div>
-                </div>
                 <h3 className="font-semibold text-foreground">Select Cards</h3>
                 <p className="text-sm text-muted-foreground">
                   Click on two cards to form a pair
                 </p>
               </div>
               <div className="text-center space-y-3">
-                <div className="flex justify-center">
-                  <div className="p-3 bg-secondary/20 rounded-lg">
-                    <Heart className="h-8 w-8 text-secondary" />
-                  </div>
-                </div>
                 <h3 className="font-semibold text-foreground">Find Matches</h3>
                 <p className="text-sm text-muted-foreground">
                   Match biblical names, places, and events that are connected
                 </p>
               </div>
               <div className="text-center space-y-3">
-                <div className="flex justify-center">
-                  <div className="p-3 bg-accent/20 rounded-lg">
-                    <Book className="h-8 w-8 text-accent" />
-                  </div>
-                </div>
                 <h3 className="font-semibold text-foreground">Learn Scripture</h3>
                 <p className="text-sm text-muted-foreground">
                   Discover the story behind each connection with verse references
@@ -113,6 +98,11 @@ const Index = () => {
             "Study to show thyself approved" — 2 Timothy 2:15
           </p>
         </div>
+
+        {/* Footer */}
+        <footer className="text-center py-6 text-sm text-muted-foreground border-t border-border/50">
+          © Emmanuel Maduneme 2025 (Vibecoded with Lovable and Cursor)
+        </footer>
       </div>
     </div>
   );

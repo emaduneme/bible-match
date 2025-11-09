@@ -48,8 +48,8 @@ export function saveGameResult(won: boolean) {
 }
 
 export function getShareText(score: number, total: number, theme: string): string {
-  const emoji = score === total ? "🟩".repeat(total) : "🟩".repeat(score) + "⬜".repeat(total - score);
+  const result = score === total ? "✓".repeat(total) : "✓".repeat(score) + "✗".repeat(total - score);
   const url = typeof window !== "undefined" ? window.location.origin : "https://example.com";
-  return `Bible Match ${theme}\n${score}/${total}\n${emoji}\n\nPlay at: ${url}`;
+  return `Bible Match ${theme}\n${score}/${total}\n${result}\n\nPlay at: ${url}`;
 }
 

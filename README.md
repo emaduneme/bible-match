@@ -1,8 +1,8 @@
-# Bible Link Match 🕊️
+# Bible Link Match
 
 An interactive Bible-themed matching game that helps players learn about biblical connections between people, places, and events. Test your knowledge of Scripture by matching related pairs and discover verses that illuminate each connection!
 
-## 🎮 Game Features
+## Game Features
 
 - **Multiple Themes**: Choose from different categories including:
   - People & Relationships (mentors, siblings, companions)
@@ -17,7 +17,7 @@ An interactive Bible-themed matching game that helps players learn about biblica
 - **Responsive Design**: Beautiful, mobile-first interface that works on all devices
 - **Modern UI**: Smooth animations and elegant design using shadcn-ui components
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -42,7 +42,7 @@ npm run dev
 
 The game will open in your browser at `http://localhost:5173`
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **React 18** - Modern React with hooks
 - **TypeScript** - Type-safe development
@@ -52,7 +52,7 @@ The game will open in your browser at `http://localhost:5173`
 - **React Router** - Client-side routing
 - **Lucide React** - Icon library
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 bible-match/
@@ -76,7 +76,7 @@ bible-match/
 └── package.json
 ```
 
-## 🎯 How to Play
+## How to Play
 
 1. **Choose a Theme**: Select from various biblical themes or play with all pairs
 2. **Match Pairs**: Click two cards to see if they match
@@ -84,7 +84,7 @@ bible-match/
 4. **Score Points**: Complete all pairs before running out of attempts
 5. **Victory**: Achieve a perfect score and challenge yourself with a new theme!
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Feel free to:
 - Add new Bible pairs and themes
@@ -92,17 +92,17 @@ Contributions are welcome! Feel free to:
 - Fix bugs or optimize performance
 - Enhance documentation
 
-## 📝 License
+## License
 
 This project is open source and available under the MIT License.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Bible verses and content sourced from various Bible translations
 - Built with modern web technologies and best practices
 - Designed with accessibility and user experience in mind
 
-## 📧 Contact
+## Contact
 
 Emmanuel Aduneme - [@emaduneme](https://github.com/emaduneme)
 
@@ -110,4 +110,4 @@ Project Link: [https://github.com/emaduneme/bible-match](https://github.com/emad
 
 ---
 
-**Made with ❤️ to help people engage with Scripture in a fun, interactive way!**
+**Made to help people engage with Scripture in a fun, interactive way!**

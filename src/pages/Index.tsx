@@ -101,7 +101,7 @@ const Index = () => {
 
         {/* Footer */}
         <footer className="text-center py-6 text-sm text-muted-foreground border-t border-border/50">
-          © Emmanuel Maduneme 2025 (Vibecoded with Lovable and Cursor)
+          2025
         </footer>
       </div>
     </div>

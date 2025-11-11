@@ -35,6 +35,8 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
   const [gamePairs, setGamePairs] = useState<MatchPair[]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [recentMiss, setRecentMiss] = useState<string | null>(null);
+  const [incorrectCards, setIncorrectCards] = useState<string[]>([]);
+  const [correctCards, setCorrectCards] = useState<string[]>([]);
 
   useEffect(() => {
     initializeGame();
@@ -65,8 +67,19 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
 
   const handleCardClick = (cardId: string) => {
     const card = cards.find((c) => c.id === cardId);
-    if (!card || matchedPairs.includes(card.pairId) || selectedCards.includes(cardId)) {
+    if (!card || matchedPairs.includes(card.pairId)) {
       return;
+    }
+
+    // Allow deselection: if card is already selected, remove it
+    if (selectedCards.includes(cardId)) {
+      setSelectedCards(selectedCards.filter((id) => id !== cardId));
+      return;
+    }
+
+    // Add vibration feedback on mobile (if supported)
+    if (navigator.vibrate) {
+      navigator.vibrate(10); // Short, subtle vibration
     }
 
     const newSelection = [...selectedCards, cardId];
@@ -86,14 +99,27 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
       // Correct match
       const pair = gamePairs.find((p) => p.id === card1.pairId) || matchPairs.find((p) => p.id === card1.pairId);
       if (pair) {
+        // Vibration feedback for success
+        if (navigator.vibrate) {
+          navigator.vibrate([50, 30, 50]); // Double pulse for success
+        }
+        
+        // Visual feedback: mark cards as correct
+        setCorrectCards([card1Id, card2Id]);
+        
         setIsCorrect(true);
         setCurrentFeedback({ verse: pair.verse, note: pair.note });
         const newMatched = [...matchedPairs, card1.pairId];
         setMatchedPairs(newMatched);
         const newScore = score + 1;
         setScore(newScore);
-        // Remove matched cards from the board
-        setCards((prev) => prev.filter((c) => c.pairId !== card1.pairId));
+        
+        // Remove matched cards from the board after animation
+        setTimeout(() => {
+          setCards((prev) => prev.filter((c) => c.pairId !== card1.pairId));
+          setCorrectCards([]);
+        }, 400);
+        
         setShowFeedback(true);
 
         // Check if game is complete
@@ -106,14 +132,27 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
       }
     } else {
       // Incorrect match
+      // Vibration feedback for error
+      if (navigator.vibrate) {
+        navigator.vibrate([30, 50, 30, 50, 30]); // Triple short pulse for error
+      }
+      
+      // Visual feedback: mark cards as incorrect
+      setIncorrectCards([card1Id, card2Id]);
+      
       setIsCorrect(false);
       setCurrentFeedback({ verse: "", note: "" });
       const next = attemptsLeft - 1;
       setAttemptsLeft(next);
       setRecentMiss(card2?.name ?? null);
+      
       // Briefly show selection then clear it and return cards to grid
-      setTimeout(() => setSelectedCards([]), 600);
+      setTimeout(() => {
+        setSelectedCards([]);
+        setIncorrectCards([]);
+      }, 600);
       setTimeout(() => setRecentMiss(null), 1200);
+      
       if (next <= 0) {
         // Delay ending to let the dialog show briefly
         setTimeout(() => {
@@ -135,6 +174,13 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
   const totalPairs = gamePairs.length || 5;
   const maxAttempts = Math.min(5, totalPairs);
   const progress = (matchedPairs.length / totalPairs) * 100;
+
+  const handleBackClick = () => {
+    const hasProgress = matchedPairs.length > 0 || selectedCards.length > 0;
+    if (!hasProgress || window.confirm("Leave game? Your current progress will be lost.")) {
+      onBackToHome();
+    }
+  };
 
   if (gameComplete) {
     return <VictoryScreen score={score} totalPairs={totalPairs} onRestart={handleRestart} theme={themeId} />;
@@ -158,7 +204,7 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 space-y-4">
             <div className="flex items-center justify-between">
-            <Button variant="outline" onClick={onBackToHome} size="sm">
+            <Button variant="outline" onClick={handleBackClick} size="sm">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
             </Button>
@@ -172,10 +218,10 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
               <span>Progress</span>
               <span>{matchedPairs.length} of {totalPairs} matched</span>
             </div>
-            <Progress value={progress} className="h-3" />
+            <Progress value={progress} className="h-3 bg-muted/40" />
             <div className="flex items-center justify-between pt-2">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Attempts</span>
+                <span className="text-sm text-muted-foreground">Lives remaining</span>
                 <div className="flex gap-1">
                   {Array.from({ length: maxAttempts }).map((_, i) => (
                     <Badge key={i} variant={i < attemptsLeft ? "default" : "secondary"} className="px-2">
@@ -184,8 +230,7 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
                   ))}
                 </div>
               </div>
-              <span className="sr-only" aria-live="polite">Attempts left: {attemptsLeft}</span>
-              <div className="text-sm text-muted-foreground">Pairs this game: {totalPairs}</div>
+              <span className="sr-only" aria-live="polite">Lives remaining: {attemptsLeft}</span>
             </div>
           </div>
           {/* Selection box at the top with two slots */}
@@ -202,16 +247,16 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
                 const c = id ? cards.find((x) => x.id === id) : undefined;
                 return (
                   <div key={idx} className="space-y-1">
-                    <div className="text-xs font-medium text-center" style={{ color: idx === 0 ? "hsl(42 78% 55%)" : "hsl(210 55% 70%)" }}>
+                    <div className="text-xs font-medium text-center text-foreground">
                       {idx === 0 ? "FIRST" : "SECOND"}
                     </div>
                     <Card className={cn(
-                      "h-14 md:h-16 flex items-center justify-center border-2 transition-all",
+                      "h-12 md:h-14 flex items-center justify-center border-2 transition-all",
                       idx === 0 ? "border-primary/60 bg-primary/5" : "border-secondary/60 bg-secondary/5",
                       c && "shadow-[var(--shadow-elevated)]"
                     )}>
                       <span className={cn("text-base md:text-lg font-medium", c && "animate-fade-scale-in")}>
-                        {c ? c.name : "—"}
+                        {c ? c.name : "Tap a card"}
                       </span>
                     </Card>
                   </div>
@@ -221,13 +266,15 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {cards.map((card) => (
             <MatchCard
               key={card.id}
               name={card.name}
               isSelected={selectedCards.includes(card.id)}
               isMatched={matchedPairs.includes(card.pairId)}
+              isCorrect={correctCards.includes(card.id)}
+              isIncorrect={incorrectCards.includes(card.id)}
               onClick={() => handleCardClick(card.id)}
             />
           ))}

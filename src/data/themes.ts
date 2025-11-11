@@ -24,7 +24,7 @@ export const THEMES: Theme[] = [
   {
     id: "people",
     title: "People & Relationships",
-    description: "Mentors, siblings, companions and close ties.",
+    description: "Siblings, mentors, companions.",
     relationships: [
       "mentor",
       "brothers",
@@ -39,7 +39,7 @@ export const THEMES: Theme[] = [
   {
     id: "people_places",
     title: "People & Places",
-    description: "Where they lived, traveled, or encountered God.",
+    description: "Travels and encounters.",
     relationships: [
       "origin",
       "exile",
@@ -55,7 +55,7 @@ export const THEMES: Theme[] = [
   {
     id: "people_events",
     title: "People & Events",
-    description: "Battles, miracles, preachings and calls.",
+    description: "Battles, miracles, callings.",
     relationships: [
       "leader_of_event",
       "healing",

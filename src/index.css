@@ -144,4 +144,12 @@ All colors MUST be HSL.
   .animate-fade-scale-in {
     animation: fade-scale-in 0.2s ease-out;
   }
+
+  @keyframes pulse-success {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.95; }
+  }
+  .animate-pulse-success {
+    animation: pulse-success 0.4s ease-in-out;
+  }
 }

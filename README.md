@@ -136,7 +136,7 @@ This project is open source and available under the MIT License.
 
 ## Contact
 
-Emmanuel Aduneme - [@emaduneme](https://github.com/emaduneme)
+Emmanuel Maduneme - [@emaduneme](https://github.com/emaduneme)
 
 Project Link: [https://github.com/emaduneme/bible-match](https://github.com/emaduneme/bible-match)
 

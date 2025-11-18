@@ -1,19 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { MatchCard } from "./MatchCard";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { VictoryScreen } from "./VictoryScreen";
-import { matchPairs, MatchPair } from "@/data/matchPairs";
-import { getPairsForTheme, ThemeId } from "@/data/themes";
+import { MatchPair } from "@/data/matchPairs";
+import { getTier, getNextTier, ThemeId, TierId } from "@/data/themesWithTiers";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import {
+  getRecentTierIds,
+  loadTierHistory,
+  recordTierHistory,
+  saveTierHistory,
+  TierHistoryMap,
+} from "@/lib/tierHistory";
 
 interface GameBoardProps {
   onBackToHome: () => void;
   themeId?: ThemeId;
+  tierId?: TierId;
+  onSelectTier?: (themeId: ThemeId, tierId: TierId) => void;
+  onTierComplete?: (themeId: ThemeId, tierId: TierId, nextTierId?: TierId) => void;
 }
 
 interface CardItem {
@@ -22,7 +32,7 @@ interface CardItem {
   pairId: number;
 }
 
-export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
+export const GameBoard = ({ onBackToHome, themeId, tierId, onSelectTier, onTierComplete }: GameBoardProps) => {
   const [cards, setCards] = useState<CardItem[]>([]);
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const [matchedPairs, setMatchedPairs] = useState<number[]>([]);
@@ -37,19 +47,56 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
   const [recentMiss, setRecentMiss] = useState<string | null>(null);
   const [incorrectCards, setIncorrectCards] = useState<string[]>([]);
   const [correctCards, setCorrectCards] = useState<string[]>([]);
+  const [activeThemeId, setActiveThemeId] = useState<ThemeId | undefined>(themeId);
+  const [activeTierId, setActiveTierId] = useState<TierId | undefined>(tierId);
+  const [activeCombo, setActiveCombo] = useState(() => getTier(themeId, tierId));
 
   useEffect(() => {
-    initializeGame();
-  }, []);
+    setActiveThemeId(themeId);
+    setActiveTierId(tierId);
+    setActiveCombo(getTier(themeId, tierId));
+  }, [themeId, tierId]);
 
-  const initializeGame = () => {
-    // Choose pairs by theme (or all), cap to 5
-    const sourcePairs = themeId ? getPairsForTheme(themeId, matchPairs) : matchPairs;
-    const shuffledPairs = [...sourcePairs].sort(() => Math.random() - 0.5).slice(0, 5);
-    setGamePairs(shuffledPairs);
+  const selectPairsForTier = useCallback((): MatchPair[] => {
+    if (!activeCombo || !activeThemeId || !activeTierId) return [];
+    const pool = activeCombo.tier.pairs;
+    if (pool.length === 0) return [];
+    const poolIds = new Set(pool.map((pair) => pair.id));
+    
+    // Load fresh history from storage to avoid circular dependency
+    const currentHistory = loadTierHistory();
+    const recent = getRecentTierIds(currentHistory, activeThemeId, activeTierId).filter((id) =>
+      poolIds.has(id)
+    );
+    const available = pool.filter((pair) => !recent.includes(pair.id));
+    const workingPool =
+      available.length >= activeCombo.tier.pairCount ? available : [...pool];
+    const shuffled = [...workingPool].sort(() => Math.random() - 0.5);
+    const selection = shuffled.slice(0, activeCombo.tier.pairCount);
+    
+    // Record history and save immediately
+    const updatedHistory = recordTierHistory(
+      currentHistory,
+      activeThemeId,
+      activeTierId,
+      selection.map((pair) => pair.id),
+      pool.length
+    );
+    saveTierHistory(updatedHistory);
+    
+    return selection;
+  }, [activeCombo, activeThemeId, activeTierId]);
 
+  const initializeGame = useCallback(() => {
+    if (!activeCombo) return;
+    const sourcePairs = selectPairsForTier();
+    if (sourcePairs.length === 0) return;
+    
+    // Store the selected pairs for the game logic
+    setGamePairs(sourcePairs);
+    
     const gameCards: CardItem[] = [];
-    shuffledPairs.forEach((pair) => {
+    sourcePairs.forEach((pair) => {
       gameCards.push(
         { id: `${pair.id}-a`, name: pair.a, pairId: pair.id },
         { id: `${pair.id}-b`, name: pair.b, pairId: pair.id }
@@ -61,9 +108,18 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
     setSelectedCards([]);
     setScore(0);
     setGameComplete(false);
-    setAttemptsLeft(Math.min(5, shuffledPairs.length || 5));
+    setAttemptsLeft(activeCombo.tier.maxLives);
     setGameOver(false);
-  };
+  }, [activeCombo, selectPairsForTier]);
+
+  useEffect(() => {
+    initializeGame();
+  }, [initializeGame]);
+
+  const nextTier = useMemo(() => {
+    if (!activeThemeId || !activeTierId) return undefined;
+    return getNextTier(activeThemeId, activeTierId);
+  }, [activeThemeId, activeTierId]);
 
   const handleCardClick = (cardId: string) => {
     const card = cards.find((c) => c.id === cardId);
@@ -97,7 +153,7 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
 
     if (card1 && card2 && card1.pairId === card2.pairId) {
       // Correct match
-      const pair = gamePairs.find((p) => p.id === card1.pairId) || matchPairs.find((p) => p.id === card1.pairId);
+      const pair = gamePairs.find((p) => p.id === card1.pairId);
       if (pair) {
         // Vibration feedback for success
         if (navigator.vibrate) {
@@ -125,6 +181,10 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
         // Check if game is complete
         const totalPairs = gamePairs.length || 5;
         if (newMatched.length === totalPairs) {
+          if (activeThemeId && activeTierId) {
+            const upcomingTier = getNextTier(activeThemeId, activeTierId);
+            onTierComplete?.(activeThemeId, activeTierId, upcomingTier?.id);
+          }
           setTimeout(() => {
             setGameComplete(true);
           }, 1500);
@@ -172,7 +232,7 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
   };
 
   const totalPairs = gamePairs.length || 5;
-  const maxAttempts = Math.min(5, totalPairs);
+  const maxAttempts = activeCombo?.tier.maxLives ?? Math.min(5, totalPairs);
   const progress = (matchedPairs.length / totalPairs) * 100;
 
   const handleBackClick = () => {
@@ -182,8 +242,38 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
     }
   };
 
+  const handleSelectNextTier = (nextTierId: TierId) => {
+    if (!activeThemeId) return;
+    onSelectTier?.(activeThemeId, nextTierId);
+    setShowFeedback(false);
+    setGameComplete(false);
+    setActiveTierId(nextTierId);
+    setActiveCombo(getTier(activeThemeId, nextTierId));
+  };
+
+  if (!activeCombo) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="text-center space-y-4">
+          <p className="text-lg text-muted-foreground">Select a theme and tier to start playing.</p>
+          <Button onClick={onBackToHome}>Back to home</Button>
+        </div>
+      </div>
+    );
+  }
+
   if (gameComplete) {
-    return <VictoryScreen score={score} totalPairs={totalPairs} onRestart={handleRestart} theme={themeId} />;
+    return (
+      <VictoryScreen
+        score={score}
+        totalPairs={totalPairs}
+        onRestart={handleRestart}
+        theme={activeCombo.theme.title}
+        nextTierLabel={nextTier ? `Continue to ${nextTier.label}` : undefined}
+        onSelectNextTier={nextTier ? () => handleSelectNextTier(nextTier.id) : undefined}
+        onSelectAnotherTheme={onBackToHome}
+      />
+    );
   }
 
   if (gameOver) {
@@ -192,7 +282,7 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <h1 className="text-4xl font-bold text-destructive">Game Over</h1>
           <p className="text-muted-foreground">You've used all attempts. Try again!</p>
-          <div className="text-2xl font-semibold">Score: {score} / {matchPairs.length}</div>
+          <div className="text-2xl font-semibold">Score: {score} / {totalPairs}</div>
           <Button variant="hero" size="lg" onClick={handleRestart}>Restart</Button>
         </div>
       </div>
@@ -213,6 +303,17 @@ export const GameBoard = ({ onBackToHome, themeId }: GameBoardProps) => {
                 <p className="text-2xl font-bold text-primary">{score} / {totalPairs}</p>
             </div>
           </div>
+          {activeCombo && (
+            <div className="flex flex-wrap items-center justify-between rounded-md border border-border/60 bg-card/30 px-3 py-2">
+              <div>
+                <p className="text-sm font-semibold text-foreground">{activeCombo.theme.title}</p>
+                <p className="text-xs text-muted-foreground">{activeCombo.theme.description}</p>
+              </div>
+              <Badge variant="secondary" aria-label={activeCombo.tier.label}>
+                {activeCombo.tier.label}
+              </Badge>
+            </div>
+          )}
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Progress</span>

@@ -4,17 +4,13 @@ An interactive Bible-themed matching game that helps players learn about biblica
 
 ## Game Features
 
-- **Multiple Themes**: Choose from different categories including:
-  - People & Relationships (mentors, siblings, companions)
-  - People & Places (origins, missions, revelations)
-  - People & Events (battles, miracles, divine calls)
-  - Old Testament pairs
-  - New Testament pairs
-
-- **Educational Feedback**: Each correct match reveals a relevant Bible verse and explanatory note
-- **Score Tracking**: Monitor your progress with a visual progress bar
-- **Limited Attempts**: Strategic gameplay with 5 attempts per game
-- **Responsive Design**: Beautiful, mobile-first interface that works on all devices
+- **Theme-First Play**: Pick a theme (People & Relationships, People & Places, People & Events) and stay immersed in it
+- **Built-In Difficulty Curve**: Each theme embeds tiered decks (Yellow → Green → Blue) with rising pair counts and fewer lives
+- **Progress That Sticks**: Completed tiers unlock the next tier for that theme and are remembered via local storage
+- **Fresh Rotations**: Each tier has a larger pool of pairs so replays feel new, and recently used matches are rotated out automatically
+- **Educational Feedback**: Every correct match reveals its verse reference and explanatory note
+- **Accessibility & Mobile-First**: Keyboard-friendly controls, `aria-live` updates, dense mobile grid
+- **Score + Lives HUD**: Progress bar, remaining lives indicator, and review dialog for each attempt
 - **Modern UI**: Smooth animations and elegant design using shadcn-ui components
 
 ## Getting Started
@@ -63,9 +59,10 @@ bible-match/
 │   │   ├── FeedbackDialog.tsx # Success/feedback modal
 │   │   └── VictoryScreen.tsx  # End-game screen
 │   ├── data/
-│   │   ├── matchPairs.json    # Bible pairs with verses
-│   │   ├── themes.json        # Game theme categories
-│   │   └── books.json         # Bible book metadata
+│   │   ├── themesWithTiers.json # Theme + tier dataset (yellow/green/blue)
+│   │   ├── themesWithTiers.ts   # Helper utilities for theme/tier lookup
+│   │   ├── matchPairs.json      # Shared Bible pairs with verses (reference library)
+│   │   └── books.json           # Bible book metadata
 │   ├── pages/
 │   │   ├── Index.tsx          # Home/landing page
 │   │   └── NotFound.tsx       # 404 page
@@ -78,11 +75,46 @@ bible-match/
 
 ## How to Play
 
-1. **Choose a Theme**: Select from various biblical themes or play with all pairs
-2. **Match Pairs**: Click two cards to see if they match
-3. **Learn**: When you make a correct match, discover the Bible verse that connects them
-4. **Score Points**: Complete all pairs before running out of attempts
-5. **Victory**: Achieve a perfect score and challenge yourself with a new theme!
+1. **Pick a Theme**: Choose the topic that excites you most (relationships, places, events)
+2. **Select a Tier**: Start with the Yellow deck for a warm-up and climb toward the tougher Blue decks
+3. **Match Pairs**: Tap any two cards; matching them removes the pair and awards points
+4. **Learn as You Go**: Each correct match surfaces its verse and a quick historical note
+5. **Advance or Explore**: After a win, continue to the next tier in that theme or jump back to explore another theme
+
+## Themes, Tiers & Dataset
+
+- Source file: `src/data/themesWithTiers.json`
+- Each theme entry defines:
+  - `id`, `title`, `description`, `icon`
+  - `tiers[]`: ordered difficulty steps (e.g., Yellow → Green → Blue)
+- Each tier defines:
+  - `id`, `label`, `difficulty`, `color`, `pairCount`, `maxLives`
+  - `pairs[]`: **acts as the full pool**. Each playthrough randomly samples `pairCount` entries from this list, so give every tier more pairs than it needs. Each entry is shaped like `MatchPair` (fields `id`, `a`, `b`, `relationship`, `verse`, `note`, optional `book`)
+- `src/data/themesWithTiers.ts` loads the JSON, normalizes `pairCount`/`maxLives`, and exposes helpers (`getThemes`, `getTier`, `getNextTier`)
+- To add or edit content:
+  1. Duplicate a theme or tier in `themesWithTiers.json`
+  2. Provide at least 4 pairs for the entry-level tier, then raise difficulty by increasing pair count or obscurity
+  3. Make sure `pairs.length >= pairCount` so the random rotation has something to work with
+  4. Run `npm run build` (or `npm run lint`) to ensure the JSON parses cleanly
+- The home page lists themes; selecting one reveals its tiers. `GameBoard` launches with `{ themeId, tierId }` and Victory suggests the next tier automatically.
+
+## Progress Persistence
+
+- File: `src/lib/progress.ts`
+- Stores unlocked tiers per theme in `localStorage` (`bible-match:theme-progress:v1`)
+- Guarantees the first tier of every theme is unlocked by default
+- Helper functions:
+  - `loadProgress(themes)` → loads + normalizes progress
+  - `saveProgress(progress)` → persists to storage
+  - `unlockTierProgress(progress, themeId, tierId)` → returns a new map with the tier unlocked
+  - `isTierUnlocked(progress, themeId, tierId)` → convenience check for the UI
+- `Index.tsx` consumes these helpers to disable locked tiers and remember player progress, while `GameBoard` notifies the parent when a tier is completed so the next tier unlocks automatically.
+
+### Pair Rotation History
+
+- File: `src/lib/tierHistory.ts`
+- Tracks the most recently used pair IDs per `{themeId}:{tierId}` in `localStorage`
+- `GameBoard` samples `pairCount` cards from the tier’s `pairs` pool, preferring pairs that have not appeared recently. When the pool is exhausted it resets the history and starts over, so replays feel novel while still cycling through the full set.
 
 ## Contributing
 

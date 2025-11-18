@@ -1,18 +1,80 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { GameBoard } from "@/components/GameBoard";
 import { Book } from "lucide-react";
-import { getThemesWithPairs, ThemeId } from "@/data/themes";
-import { matchPairs } from "@/data/matchPairs";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { getThemes, ThemeId, TierId } from "@/data/themesWithTiers";
+import {
+  loadProgress,
+  saveProgress,
+  unlockTierProgress,
+  isTierUnlocked,
+  ThemeProgressMap,
+} from "@/lib/progress";
 
 const Index = () => {
+  const themes = useMemo(() => getThemes(), []);
   const [gameStarted, setGameStarted] = useState(false);
-  const [selectedTheme, setSelectedTheme] = useState<ThemeId | null>(null);
+  const [selectedThemeId, setSelectedThemeId] = useState<ThemeId | null>(null);
+  const [selectedTierId, setSelectedTierId] = useState<TierId | null>(null);
+  const [progress, setProgress] = useState<ThemeProgressMap>(() => loadProgress(themes));
 
-  if (gameStarted) {
-    return <GameBoard onBackToHome={() => setGameStarted(false)} themeId={selectedTheme ?? undefined} />;
+  const selectedTheme = useMemo(
+    () => themes.find((theme) => theme.id === selectedThemeId) ?? null,
+    [themes, selectedThemeId]
+  );
+
+  useEffect(() => {
+    setProgress(loadProgress(themes));
+  }, [themes]);
+
+  useEffect(() => {
+    if (!selectedTheme) return;
+    const unlockedTiers = progress[selectedTheme.id] ?? [];
+    const fallbackTierId =
+      unlockedTiers.find((tier) => selectedTheme.tiers.some((t) => t.id === tier)) ??
+      selectedTheme.tiers[0]?.id ??
+      null;
+    if (!fallbackTierId) {
+      setSelectedTierId(null);
+      return;
+    }
+    if (!selectedTierId || !unlockedTiers.includes(selectedTierId)) {
+      setSelectedTierId(fallbackTierId);
+    }
+  }, [selectedTheme, selectedTierId, progress]);
+
+  const handleTierComplete = (theme: ThemeId, tier: TierId, nextTier?: TierId) => {
+    setProgress((prev) => {
+      let updated = unlockTierProgress(prev, theme, tier);
+      updated = unlockTierProgress(updated, theme, nextTier);
+      saveProgress(updated);
+      return updated;
+    });
+  };
+
+  const canStartGame =
+    !!selectedThemeId &&
+    !!selectedTierId &&
+    isTierUnlocked(progress, selectedThemeId, selectedTierId as TierId);
+
+  if (gameStarted && canStartGame) {
+    return (
+      <GameBoard
+        onBackToHome={() => {
+          setGameStarted(false);
+        }}
+        themeId={selectedThemeId}
+        tierId={selectedTierId as TierId}
+        onSelectTier={(themeId, tierId) => {
+          setSelectedThemeId(themeId);
+          setSelectedTierId(tierId);
+        }}
+        onTierComplete={handleTierComplete}
+      />
+    );
   }
 
   return (
@@ -64,24 +126,80 @@ const Index = () => {
 
         {/* Theme picker */}
         <Card className="p-6 bg-gradient-to-br from-card to-card/90 shadow-[var(--shadow-elevated)]">
-          <h2 className="text-xl font-semibold mb-4">Choose a Theme</h2>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {getThemesWithPairs(matchPairs).map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setSelectedTheme(t.id)}
-                className={cn(
-                  "text-left rounded-md border bg-card p-4 transition-[var(--transition-smooth)] hover:shadow-[var(--shadow-elevated)]",
-                  selectedTheme === t.id && "ring-2 ring-primary"
-                )}
-              >
-                <div className="font-semibold">{t.title}</div>
-                <div className="text-sm text-muted-foreground">{t.description}</div>
-              </button>
-            ))}
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <h2 className="text-xl font-semibold">Choose a Theme</h2>
+            <p className="text-sm text-muted-foreground">Each theme contains tiered decks (Yellow → Blue).</p>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {themes.map((theme) => {
+              const isSelected = selectedThemeId === theme.id;
+              const unlockedTiers = progress[theme.id] ?? [];
+              const defaultTier = unlockedTiers[0] ?? theme.tiers[0]?.id ?? null;
+              return (
+                <button
+                  key={theme.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedThemeId(theme.id);
+                    setSelectedTierId(defaultTier);
+                  }}
+                  className={cn(
+                    "text-left rounded-md border bg-card/80 p-4 transition-[var(--transition-smooth)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                    isSelected && "ring-2 ring-primary"
+                  )}
+                  aria-pressed={isSelected}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="font-semibold text-foreground">{theme.title}</div>
+                    <Badge variant="secondary">{theme.tiers.length} tiers</Badge>
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">{theme.description}</p>
+                </button>
+              );
+            })}
           </div>
         </Card>
+
+        {/* Tier picker */}
+        {selectedTheme && (
+          <Card className="p-6 bg-gradient-to-br from-card to-card/90 shadow-[var(--shadow-elevated)]">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-xl font-semibold">Choose a Tier</h2>
+              <p className="text-sm text-muted-foreground">
+                Start with Yellow for a warm-up, then climb toward the hidden gems in Blue.
+              </p>
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {selectedTheme.tiers.map((tier) => {
+                const isSelected = selectedTierId === tier.id;
+                const unlocked = isTierUnlocked(progress, selectedTheme.id, tier.id);
+                return (
+                  <button
+                    key={tier.id}
+                    type="button"
+                    onClick={() => unlocked && setSelectedTierId(tier.id)}
+                    disabled={!unlocked}
+                    className={cn(
+                      "text-left rounded-md border bg-card p-4 transition-[var(--transition-smooth)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50 disabled:cursor-not-allowed",
+                      isSelected && "ring-2 ring-primary"
+                    )}
+                    aria-pressed={isSelected}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="font-semibold text-foreground">{tier.label}</div>
+                      <Badge variant="secondary">
+                        {unlocked ? tier.difficulty : "Locked"}
+                      </Badge>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {tier.pairCount} pairs • {tier.maxLives} lives
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
+        )}
 
         {/* CTA Button */}
         <div className="text-center space-y-4">
@@ -90,7 +208,7 @@ const Index = () => {
             size="lg"
             onClick={() => setGameStarted(true)}
             className="px-12 py-6 text-lg"
-            disabled={!selectedTheme}
+            disabled={!canStartGame}
           >
             Start Playing
           </Button>

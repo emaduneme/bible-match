@@ -293,6 +293,88 @@ These remain optional for future consideration:
 
 ---
 
+## ✅ Phase 3 - Theme-First Difficulty
+
+### 11. Theme + Tier Dataset ✅
+**Files:** `src/data/themesWithTiers.json`, `src/data/themesWithTiers.ts`
+
+- Replaced the separate `levels.json` + `themes.json` combo with a single theme-first dataset
+- Each theme now embeds ordered tiers (Yellow → Green → Blue) that define `pairCount`, `maxLives`, and a **larger pool of pairs** to randomly sample from, so replays feel fresh
+- Helper utilities (`getThemes`, `getTier`, `getNextTier`) normalize the JSON and surface lookup helpers used across the app
+
+```ts
+const THEMES: ThemeWithTiers[] = (RAW as ThemeWithTiers[]).map((theme) => ({
+  ...theme,
+  tiers: theme.tiers.map(normalizeTier),
+}));
+
+export const getTier = (themeId: ThemeId | undefined, tierId: TierId | undefined) =>
+  theme && tier ? { theme, tier } : undefined;
+```
+
+### 12. Theme-First Home Experience ✅
+**File:** `src/pages/Index.tsx`
+
+- Landing page now shows only themes (People & Relationships, People & Places, People & Events)
+- Selecting a theme reveals its tier chips with color badges, pair counts, and lives—mirroring NYT Connections’ embedded difficulty
+- “Start Playing” requires a theme + tier; after a session the same component handles tier changes triggered by the game
+
+```tsx
+const themes = useMemo(() => getThemes(), []);
+const [selectedThemeId, setSelectedThemeId] = useState<ThemeId | null>(null);
+const [selectedTierId, setSelectedTierId] = useState<TierId | null>(null);
+
+{selectedTheme.tiers.map((tier) => (
+  <button
+    key={tier.id}
+    onClick={() => setSelectedTierId(tier.id)}
+    className={cn("rounded-md border bg-card p-4", isSelected && "ring-2 ring-primary")}
+  >
+    <div className="flex items-center justify-between">
+      <span className="font-semibold">{tier.label}</span>
+      <Badge variant="secondary">{tier.difficulty}</Badge>
+    </div>
+    <div className="text-sm text-muted-foreground">
+      {tier.pairCount} pairs • {tier.maxLives} lives
+    </div>
+  </button>
+))}
+```
+
+### 13. Tier-Aware Game Loop ✅
+**Files:** `src/components/GameBoard.tsx`, `src/components/VictoryScreen.tsx`
+
+- `GameBoard` now receives `{ themeId, tierId }`, loads the exact tier payload, and renders the theme/tier label in the HUD
+- Attempts, progress, and card pools come straight from the tier definition—no ad-hoc slicing of `matchPairs`
+- Victory screen offers a single “Continue to next tier” CTA plus quick access to replay or choose another theme
+
+```tsx
+const nextTier = getNextTier(activeThemeId, activeTierId);
+<VictoryScreen
+  theme={activeCombo.theme.title}
+  nextTierLabel={nextTier ? `Continue to ${nextTier.label}` : undefined}
+  onSelectNextTier={nextTier ? () => handleSelectNextTier(nextTier.id) : undefined}
+/>
+```
+
+### 14. Documentation Refresh ✅
+**File:** `README.md`
+
+- Updated “How to Play” + dataset section to describe the theme-tier structure
+- Documented how to add tiers and how the UI consumes them (theme cards → tier chips → GameBoard)
+
+- Added extra content to every tier so `pairCount` is a subset of a larger `pairs[]` pool. The runtime now randomly samples the required number of pairs from that pool and rotates recently used IDs out before reusing them.
+
+### 15. Tier Persistence & Rotation ✅
+**Files:** `src/lib/progress.ts`, `src/lib/tierHistory.ts`, `src/pages/Index.tsx`, `src/components/GameBoard.tsx`
+
+- Added a lightweight persistence layer that stores unlocked tiers per theme in `localStorage`
+- Home screen disables locked tiers and labels them until the previous tier is completed
+- `GameBoard` notifies the parent when a tier is cleared so the next one unlocks automatically; `VictoryScreen` offers “Continue to next tier” only when it’s available
+- Introduced `tierHistory` storage so each tier remembers which pair IDs were used most recently; `GameBoard` now samples from the tier’s pool and avoids reusing recent matches until the entire pool has been cycled
+
+---
+
 ## Build Status ✅
 
 - ✅ Production build successful (`npm run build`)
@@ -324,6 +406,12 @@ These remain optional for future consideration:
 3. **Tactile engagement**: Mobile devices get haptic feedback (when supported)
 4. **Clearer UI**: Better contrast, simpler labels, more intuitive controls
 5. **Better accessibility**: Full keyboard support, proper ARIA semantics
+
+### Latest Fix (Pair Stability):
+- ✅ **Fixed circular dependency**: Removed `tierHistory` state that was causing pairs to constantly change
+- ✅ **Stable pair selection**: Each game session now maintains consistent pairs throughout the entire game
+- ✅ **Proper state management**: `gamePairs` is now correctly populated with selected pairs
+- ✅ **History persistence**: Tier history loads fresh from localStorage to avoid re-render loops
 
 Ready for deployment to Netlify/Vercel with no blockers. 🚀
 

@@ -6,6 +6,7 @@ export interface MatchPair {
   relationship: string;
   verse: string;
   note: string;
+  book?: string;
 }
 
 // Load all pairs from JSON (single source of truth)

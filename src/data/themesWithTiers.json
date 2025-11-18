@@ -1,0 +1,734 @@
+[
+  {
+    "id": "people_relationships",
+    "title": "People & Relationships",
+    "description": "Mentors, siblings, companions, and covenant friends.",
+    "tiers": [
+      {
+        "id": "yellow",
+        "label": "Yellow • Familiar pairs",
+        "difficulty": "easy",
+        "color": "amber",
+        "pairCount": 4,
+        "maxLives": 5,
+        "pairs": [
+          {
+            "id": 5001,
+            "type": "pair",
+            "a": "Moses",
+            "b": "Aaron",
+            "relationship": "brothers",
+            "verse": "Exodus 4:27",
+            "note": "Aaron met Moses at Sinai and joined his mission.",
+            "book": "Exodus"
+          },
+          {
+            "id": 5002,
+            "type": "pair",
+            "a": "Ruth",
+            "b": "Naomi",
+            "relationship": "family_loyalty",
+            "verse": "Ruth 1:16",
+            "note": "Ruth refused to leave Naomi’s side in hardship.",
+            "book": "Ruth"
+          },
+          {
+            "id": 5004,
+            "type": "pair",
+            "a": "Martha",
+            "b": "Mary",
+            "relationship": "sisters",
+            "verse": "Luke 10:38-42",
+            "note": "Martha served while Mary listened to Jesus.",
+            "book": "Luke"
+          },
+          {
+            "id": 310,
+            "type": "pair",
+            "a": "Jonathan",
+            "b": "David",
+            "relationship": "friendship",
+            "verse": "1 Samuel 18:3",
+            "note": "Jonathan made a covenant of friendship with David.",
+            "book": "1 Samuel"
+          },
+          {
+            "id": 6001,
+            "type": "pair",
+            "a": "Joseph",
+            "b": "Benjamin",
+            "relationship": "brothers",
+            "verse": "Genesis 45:14",
+            "note": "Joseph wept as he embraced his youngest brother.",
+            "book": "Genesis"
+          },
+          {
+            "id": 6002,
+            "type": "pair",
+            "a": "Mary",
+            "b": "Elizabeth",
+            "relationship": "family_loyalty",
+            "verse": "Luke 1:41-44",
+            "note": "Mary’s greeting caused Elizabeth’s child to leap for joy.",
+            "book": "Luke"
+          }
+        ]
+      },
+      {
+        "id": "green",
+        "label": "Green • Growing connections",
+        "difficulty": "medium",
+        "color": "emerald",
+        "pairCount": 5,
+        "maxLives": 4,
+        "pairs": [
+          {
+            "id": 304,
+            "type": "pair",
+            "a": "Caleb",
+            "b": "Joshua",
+            "relationship": "companions",
+            "verse": "Numbers 14:38",
+            "note": "Both remained faithful after spying out Canaan.",
+            "book": "Numbers"
+          },
+          {
+            "id": 309,
+            "type": "pair",
+            "a": "Samuel",
+            "b": "Eli",
+            "relationship": "mentor",
+            "verse": "1 Samuel 3:9",
+            "note": "Eli taught Samuel how to respond to God’s call.",
+            "book": "1 Samuel"
+          },
+          {
+            "id": 308,
+            "type": "pair",
+            "a": "Boaz",
+            "b": "Ruth",
+            "relationship": "mission",
+            "verse": "Ruth 4:13",
+            "note": "Boaz married Ruth and continued Naomi’s family line.",
+            "book": "Ruth"
+          },
+          {
+            "id": 5104,
+            "type": "pair",
+            "a": "Barnabas",
+            "b": "Paul",
+            "relationship": "missionary_partners",
+            "verse": "Acts 13:2",
+            "note": "The Spirit set them apart for mission together.",
+            "book": "Acts"
+          },
+          {
+            "id": 334,
+            "type": "pair",
+            "a": "Priscilla",
+            "b": "Aquila",
+            "relationship": "missionary_partners",
+            "verse": "Acts 18:2-3",
+            "note": "They worked and taught together in every city.",
+            "book": "Acts"
+          },
+          {
+            "id": 6003,
+            "type": "pair",
+            "a": "Paul",
+            "b": "Silas",
+            "relationship": "missionary_partners",
+            "verse": "Acts 16:25",
+            "note": "They prayed and sang in prison before the earthquake.",
+            "book": "Acts"
+          },
+          {
+            "id": 6004,
+            "type": "pair",
+            "a": "Moses",
+            "b": "Joshua",
+            "relationship": "mentor",
+            "verse": "Deuteronomy 31:7",
+            "note": "Moses charged Joshua to lead Israel with courage.",
+            "book": "Deuteronomy"
+          }
+        ]
+      },
+      {
+        "id": "blue",
+        "label": "Blue • Deep bonds",
+        "difficulty": "hard",
+        "color": "sky",
+        "pairCount": 6,
+        "maxLives": 3,
+        "pairs": [
+          {
+            "id": 333,
+            "type": "pair",
+            "a": "Paul",
+            "b": "Timothy",
+            "relationship": "mentor",
+            "verse": "2 Timothy 1:2",
+            "note": "Paul calls Timothy his true son in the faith.",
+            "book": "2 Timothy"
+          },
+          {
+            "id": 5205,
+            "type": "pair",
+            "a": "Jeremiah",
+            "b": "Baruch",
+            "relationship": "scribe",
+            "verse": "Jeremiah 36:4",
+            "note": "Baruch served as Jeremiah’s scribe.",
+            "book": "Jeremiah"
+          },
+          {
+            "id": 5201,
+            "type": "pair",
+            "a": "Hosea",
+            "b": "Gomer",
+            "relationship": "family_loyalty",
+            "verse": "Hosea 1:2",
+            "note": "God told Hosea to marry an unfaithful wife.",
+            "book": "Hosea"
+          },
+          {
+            "id": 337,
+            "type": "pair",
+            "a": "Onesimus",
+            "b": "Philemon",
+            "relationship": "family_loyalty",
+            "verse": "Philemon 1:10",
+            "note": "Paul pleaded for forgiveness and restoration.",
+            "book": "Philemon"
+          },
+          {
+            "id": 5307,
+            "type": "pair",
+            "a": "Jehoiada",
+            "b": "Joash",
+            "relationship": "mentor",
+            "verse": "2 Chronicles 24:2",
+            "note": "Jehoiada guided young King Joash to follow the LORD.",
+            "book": "2 Chronicles"
+          },
+          {
+            "id": 6005,
+            "type": "pair",
+            "a": "Priscilla",
+            "b": "Apollos",
+            "relationship": "mentor",
+            "verse": "Acts 18:26",
+            "note": "They explained the way of God more accurately to Apollos.",
+            "book": "Acts"
+          },
+          {
+            "id": 6006,
+            "type": "pair",
+            "a": "Aquila",
+            "b": "Paul",
+            "relationship": "missionary_partners",
+            "verse": "Acts 18:3",
+            "note": "They partnered in tentmaking and ministry across cities.",
+            "book": "Acts"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "people_places",
+    "title": "People & Places",
+    "description": "Where followers traveled, settled, or encountered God.",
+    "tiers": [
+      {
+        "id": "yellow",
+        "label": "Yellow • Famous locations",
+        "difficulty": "easy",
+        "color": "amber",
+        "pairCount": 4,
+        "maxLives": 5,
+        "pairs": [
+          {
+            "id": 302,
+            "type": "pair",
+            "a": "Jacob",
+            "b": "Egypt",
+            "relationship": "exile",
+            "verse": "Genesis 46:6",
+            "note": "Jacob’s family relocated to Egypt for survival.",
+            "book": "Genesis"
+          },
+          {
+            "id": 319,
+            "type": "pair",
+            "a": "Jonah",
+            "b": "Nineveh",
+            "relationship": "mission",
+            "verse": "Jonah 3:3",
+            "note": "Jonah preached repentance to Nineveh.",
+            "book": "Jonah"
+          },
+          {
+            "id": 326,
+            "type": "pair",
+            "a": "Zacchaeus",
+            "b": "Sycamore Tree",
+            "relationship": "strategy",
+            "verse": "Luke 19:4",
+            "note": "He climbed the tree to see Jesus pass by.",
+            "book": "Luke"
+          },
+          {
+            "id": 305,
+            "type": "pair",
+            "a": "Joshua",
+            "b": "Jordan River",
+            "relationship": "miracle",
+            "verse": "Joshua 3:17",
+            "note": "The river parted so Israel crossed on dry ground.",
+            "book": "Joshua"
+          },
+          {
+            "id": 6101,
+            "type": "pair",
+            "a": "Abraham",
+            "b": "Beersheba",
+            "relationship": "resting_place",
+            "verse": "Genesis 21:33",
+            "note": "Abraham planted a tamarisk tree and called on the LORD there.",
+            "book": "Genesis"
+          },
+          {
+            "id": 6102,
+            "type": "pair",
+            "a": "Paul",
+            "b": "Athens",
+            "relationship": "preaching",
+            "verse": "Acts 17:22",
+            "note": "Paul addressed the council on Mars Hill about the unknown God.",
+            "book": "Acts"
+          }
+        ]
+      },
+      {
+        "id": "green",
+        "label": "Green • Journeys & encounters",
+        "difficulty": "medium",
+        "color": "emerald",
+        "pairCount": 5,
+        "maxLives": 4,
+        "pairs": [
+          {
+            "id": 343,
+            "type": "pair",
+            "a": "Abram",
+            "b": "Ur of the Chaldeans",
+            "relationship": "origin",
+            "verse": "Genesis 11:31",
+            "note": "Abram came from Ur of the Chaldeans.",
+            "book": "Genesis"
+          },
+          {
+            "id": 344,
+            "type": "pair",
+            "a": "Moses",
+            "b": "Mount Horeb",
+            "relationship": "revelation",
+            "verse": "Exodus 3:1-2",
+            "note": "God revealed himself to Moses at the burning bush.",
+            "book": "Exodus"
+          },
+          {
+            "id": 322,
+            "type": "pair",
+            "a": "Matthew",
+            "b": "Tax Booth",
+            "relationship": "conversion",
+            "verse": "Matthew 9:9",
+            "note": "Matthew left his tax booth to follow Jesus.",
+            "book": "Matthew"
+          },
+          {
+            "id": 331,
+            "type": "pair",
+            "a": "Lydia",
+            "b": "Philippi",
+            "relationship": "conversion",
+            "verse": "Acts 16:14-15",
+            "note": "She believed and opened her home to the team.",
+            "book": "Acts"
+          },
+          {
+            "id": 318,
+            "type": "pair",
+            "a": "Daniel",
+            "b": "Lions’ Den",
+            "relationship": "miracle",
+            "verse": "Daniel 6:22",
+            "note": "God shut the lions’ mouths to protect Daniel.",
+            "book": "Daniel"
+          },
+          {
+            "id": 6103,
+            "type": "pair",
+            "a": "Jacob",
+            "b": "Bethel",
+            "relationship": "revelation",
+            "verse": "Genesis 28:19",
+            "note": "Jacob named the place Bethel after seeing the ladder to heaven.",
+            "book": "Genesis"
+          },
+          {
+            "id": 6104,
+            "type": "pair",
+            "a": "Philip",
+            "b": "Samaria",
+            "relationship": "mission",
+            "verse": "Acts 8:5",
+            "note": "Philip proclaimed Christ in Samaria and saw great joy in the city.",
+            "book": "Acts"
+          }
+        ]
+      },
+      {
+        "id": "blue",
+        "label": "Blue • Hidden horizons",
+        "difficulty": "hard",
+        "color": "sky",
+        "pairCount": 6,
+        "maxLives": 3,
+        "pairs": [
+          {
+            "id": 321,
+            "type": "pair",
+            "a": "Nahum",
+            "b": "Nineveh",
+            "relationship": "preaching",
+            "verse": "Nahum 1:1",
+            "note": "Nahum foretold Nineveh’s coming judgment.",
+            "book": "Nahum"
+          },
+          {
+            "id": 5107,
+            "type": "pair",
+            "a": "Paul",
+            "b": "Shipwreck",
+            "relationship": "deliverance",
+            "verse": "Acts 27:44",
+            "note": "Paul and the crew reached shore safely after the ship broke apart.",
+            "book": "Acts"
+          },
+          {
+            "id": 5106,
+            "type": "pair",
+            "a": "Philip",
+            "b": "Ethiopian Eunuch",
+            "relationship": "evangelism",
+            "verse": "Acts 8:35-38",
+            "note": "Philip explained Isaiah and baptized the Ethiopian official.",
+            "book": "Acts"
+          },
+          {
+            "id": 319,
+            "type": "pair",
+            "a": "Jonah",
+            "b": "Nineveh",
+            "relationship": "mission",
+            "verse": "Jonah 3:3",
+            "note": "Jonah preached repentance to Nineveh.",
+            "book": "Jonah"
+          },
+          {
+            "id": 5303,
+            "type": "pair",
+            "a": "Zephaniah",
+            "b": "Day of the LORD",
+            "relationship": "prophecy",
+            "verse": "Zephaniah 1:7",
+            "note": "He proclaimed the coming day of the LORD.",
+            "book": "Zephaniah"
+          },
+          {
+            "id": 5302,
+            "type": "pair",
+            "a": "Haggai",
+            "b": "Paneled Houses",
+            "relationship": "rebuke",
+            "verse": "Haggai 1:4",
+            "note": "He challenged the people to rebuild the temple first.",
+            "book": "Haggai"
+          },
+          {
+            "id": 6105,
+            "type": "pair",
+            "a": "Ezekiel",
+            "b": "Chebar Canal",
+            "relationship": "revelation",
+            "verse": "Ezekiel 1:1",
+            "note": "Ezekiel saw visions of God by the Chebar Canal.",
+            "book": "Ezekiel"
+          },
+          {
+            "id": 6106,
+            "type": "pair",
+            "a": "John",
+            "b": "Patmos",
+            "relationship": "exile",
+            "verse": "Revelation 1:9",
+            "note": "John was on Patmos when he received the Revelation.",
+            "book": "Revelation"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "people_events",
+    "title": "People & Events",
+    "description": "Battles, miracles, calls, and turning points.",
+    "tiers": [
+      {
+        "id": "yellow",
+        "label": "Yellow • Classic moments",
+        "difficulty": "easy",
+        "color": "amber",
+        "pairCount": 4,
+        "maxLives": 5,
+        "pairs": [
+          {
+            "id": 305,
+            "type": "pair",
+            "a": "Joshua",
+            "b": "Jordan River",
+            "relationship": "miracle",
+            "verse": "Joshua 3:17",
+            "note": "The river parted so Israel crossed on dry ground.",
+            "book": "Joshua"
+          },
+          {
+            "id": 311,
+            "type": "pair",
+            "a": "Elijah",
+            "b": "Mount Carmel",
+            "relationship": "miracle",
+            "verse": "1 Kings 18:38",
+            "note": "Fire from heaven consumed Elijah’s altar.",
+            "book": "1 Kings"
+          },
+          {
+            "id": 323,
+            "type": "pair",
+            "a": "Peter",
+            "b": "Water",
+            "relationship": "miracle",
+            "verse": "Matthew 14:29",
+            "note": "Peter briefly walked on water toward Jesus.",
+            "book": "Matthew"
+          },
+          {
+            "id": 329,
+            "type": "pair",
+            "a": "Peter",
+            "b": "Pentecost",
+            "relationship": "preaching",
+            "verse": "Acts 2:14",
+            "note": "Peter preached to the crowds at Pentecost.",
+            "book": "Acts"
+          },
+          {
+            "id": 6201,
+            "type": "pair",
+            "a": "Moses",
+            "b": "Red Sea",
+            "relationship": "miracle",
+            "verse": "Exodus 14:21",
+            "note": "Moses stretched his hand over the sea and the waters parted.",
+            "book": "Exodus"
+          },
+          {
+            "id": 6202,
+            "type": "pair",
+            "a": "Jesus",
+            "b": "Wedding at Cana",
+            "relationship": "miracle",
+            "verse": "John 2:9",
+            "note": "Jesus turned water into wine at the wedding feast.",
+            "book": "John"
+          }
+        ]
+      },
+      {
+        "id": "green",
+        "label": "Green • Heroic feats",
+        "difficulty": "medium",
+        "color": "emerald",
+        "pairCount": 5,
+        "maxLives": 4,
+        "pairs": [
+          {
+            "id": 5005,
+            "type": "pair",
+            "a": "David",
+            "b": "Goliath",
+            "relationship": "victory",
+            "verse": "1 Samuel 17:50",
+            "note": "David defeated Goliath with a sling and a stone.",
+            "book": "1 Samuel"
+          },
+          {
+            "id": 318,
+            "type": "pair",
+            "a": "Daniel",
+            "b": "Lions’ Den",
+            "relationship": "miracle",
+            "verse": "Daniel 6:22",
+            "note": "God shut the lions’ mouths to protect Daniel.",
+            "book": "Daniel"
+          },
+          {
+            "id": 327,
+            "type": "pair",
+            "a": "Centurion",
+            "b": "Servant",
+            "relationship": "healing",
+            "verse": "Matthew 8:13",
+            "note": "Jesus healed the servant from afar.",
+            "book": "Matthew"
+          },
+          {
+            "id": 328,
+            "type": "pair",
+            "a": "Mary Magdalene",
+            "b": "Empty Tomb",
+            "relationship": "location",
+            "verse": "John 20:1",
+            "note": "She discovered the empty tomb at dawn.",
+            "book": "John"
+          },
+          {
+            "id": 332,
+            "type": "pair",
+            "a": "Silas",
+            "b": "Prison",
+            "relationship": "miracle",
+            "verse": "Acts 16:25-26",
+            "note": "An earthquake freed them at midnight prayer.",
+            "book": "Acts"
+          },
+          {
+            "id": 6203,
+            "type": "pair",
+            "a": "Elisha",
+            "b": "Widow's Oil",
+            "relationship": "miracle",
+            "verse": "2 Kings 4:5-7",
+            "note": "Oil kept flowing until every jar was filled.",
+            "book": "2 Kings"
+          },
+          {
+            "id": 6204,
+            "type": "pair",
+            "a": "Peter",
+            "b": "Beautiful Gate Beggar",
+            "relationship": "healing",
+            "verse": "Acts 3:6-8",
+            "note": "Peter lifted the lame man who then walked and praised God.",
+            "book": "Acts"
+          }
+        ]
+      },
+      {
+        "id": "blue",
+        "label": "Blue • Rare moments",
+        "difficulty": "hard",
+        "color": "sky",
+        "pairCount": 6,
+        "maxLives": 3,
+        "pairs": [
+          {
+            "id": 5301,
+            "type": "pair",
+            "a": "Habakkuk",
+            "b": "Watchtower",
+            "relationship": "prayer",
+            "verse": "Habakkuk 2:1",
+            "note": "He stationed himself to watch for God’s answer.",
+            "book": "Habakkuk"
+          },
+          {
+            "id": 5304,
+            "type": "pair",
+            "a": "Gideon",
+            "b": "Fleece",
+            "relationship": "sign",
+            "verse": "Judges 6:36-40",
+            "note": "Gideon asked for dew signs to confirm God’s call.",
+            "book": "Judges"
+          },
+          {
+            "id": 5305,
+            "type": "pair",
+            "a": "Phoebe",
+            "b": "Cenchreae",
+            "relationship": "service",
+            "verse": "Romans 16:1",
+            "note": "She served the church at Cenchreae.",
+            "book": "Romans"
+          },
+          {
+            "id": 342,
+            "type": "pair",
+            "a": "Lamb",
+            "b": "Scroll",
+            "relationship": "symbol",
+            "verse": "Revelation 5:7",
+            "note": "The Lamb alone is worthy to open the scroll.",
+            "book": "Revelation"
+          },
+          {
+            "id": 321,
+            "type": "pair",
+            "a": "Nahum",
+            "b": "Nineveh",
+            "relationship": "preaching",
+            "verse": "Nahum 1:1",
+            "note": "Nahum foretold Nineveh’s coming judgment.",
+            "book": "Nahum"
+          },
+          {
+            "id": 5308,
+            "type": "pair",
+            "a": "Anna",
+            "b": "Temple Fasting",
+            "relationship": "devotion",
+            "verse": "Luke 2:37",
+            "note": "Anna worshiped with fasting and prayer night and day in the temple.",
+            "book": "Luke"
+          },
+          {
+            "id": 6205,
+            "type": "pair",
+            "a": "Stephen",
+            "b": "Sanhedrin",
+            "relationship": "martyrdom",
+            "verse": "Acts 7:55-60",
+            "note": "Stephen saw Jesus standing at God’s right hand before being stoned.",
+            "book": "Acts"
+          },
+          {
+            "id": 6206,
+            "type": "pair",
+            "a": "Ananias",
+            "b": "Saul",
+            "relationship": "healing",
+            "verse": "Acts 9:17",
+            "note": "Ananias laid hands on Saul so he could see again.",
+            "book": "Acts"
+          }
+        ]
+      }
+    ]
+  }
+]
+

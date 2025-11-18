@@ -9,9 +9,20 @@ interface VictoryScreenProps {
   totalPairs: number;
   onRestart: () => void;
   theme?: string;
+  nextTierLabel?: string;
+  onSelectNextTier?: () => void;
+  onSelectAnotherTheme?: () => void;
 }
 
-export const VictoryScreen = ({ score, totalPairs, onRestart, theme = "Mixed" }: VictoryScreenProps) => {
+export const VictoryScreen = ({
+  score,
+  totalPairs,
+  onRestart,
+  theme = "Mixed",
+  nextTierLabel,
+  onSelectNextTier,
+  onSelectAnotherTheme,
+}: VictoryScreenProps) => {
   const [stats, setStats] = useState(getStats());
 
   useEffect(() => {
@@ -53,15 +64,29 @@ export const VictoryScreen = ({ score, totalPairs, onRestart, theme = "Mixed" }:
           <div>{stats.streak} day streak</div>
           <div>{stats.gamesWon}/{stats.gamesPlayed} wins</div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="lg" onClick={handleShare} className="flex-1">
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
-          </Button>
-          <Button variant="hero" size="lg" onClick={onRestart} className="flex-1">
-            Play Again
-          </Button>
+        <div className="flex flex-col gap-3">
+          {nextTierLabel && (
+            <Button variant="hero" size="lg" onClick={onSelectNextTier}>
+              {nextTierLabel}
+            </Button>
+          )}
+          <div className="flex gap-2">
+            <Button variant="outline" size="lg" onClick={handleShare} className="flex-1">
+              <Share2 className="mr-2 h-4 w-4" />
+              Share
+            </Button>
+            <Button variant="secondary" size="lg" onClick={onRestart} className="flex-1">
+              Replay tier
+            </Button>
+          </div>
         </div>
+        {(onSelectAnotherTheme || !nextTierLabel) && (
+          <div className="pt-4 space-y-3">
+            <Button variant="ghost" onClick={onSelectAnotherTheme}>
+              Choose another theme
+            </Button>
+          </div>
+        )}
       </Card>
     </div>
   );

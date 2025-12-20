@@ -40,7 +40,7 @@ export const VictoryScreen = ({
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-primary/5 animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-white animate-fade-in">
       <Card className="max-w-lg w-full p-8 text-center space-y-6 shadow-[var(--shadow-elevated)]">
         <div className="flex justify-center">
           <Trophy className="h-24 w-24 text-primary animate-bounce-subtle" />

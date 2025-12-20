@@ -278,7 +278,7 @@ export const GameBoard = ({ onBackToHome, themeId, tierId, onSelectTier, onTierC
 
   if (gameOver) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-destructive/10 p-4 md:p-8 animate-fade-in">
+      <div className="min-h-screen bg-white p-4 md:p-8 animate-fade-in">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <h1 className="text-4xl font-bold text-destructive">Game Over</h1>
           <p className="text-muted-foreground">You've used all attempts. Try again!</p>
@@ -290,7 +290,7 @@ export const GameBoard = ({ onBackToHome, themeId, tierId, onSelectTier, onTierC
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 p-3 md:p-6 animate-fade-in">
+    <div className="min-h-screen bg-white p-3 md:p-6 animate-fade-in">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 space-y-4">
             <div className="flex items-center justify-between">
@@ -304,7 +304,7 @@ export const GameBoard = ({ onBackToHome, themeId, tierId, onSelectTier, onTierC
             </div>
           </div>
           {activeCombo && (
-            <div className="flex flex-wrap items-center justify-between rounded-md border border-border/60 bg-card/30 px-3 py-2">
+            <div className="flex flex-wrap items-center justify-between rounded-md border border-border/60 bg-white px-3 py-2 shadow-[var(--shadow-soft)]">
               <div>
                 <p className="text-sm font-semibold text-foreground">{activeCombo.theme.title}</p>
                 <p className="text-xs text-muted-foreground">{activeCombo.theme.description}</p>
@@ -335,7 +335,7 @@ export const GameBoard = ({ onBackToHome, themeId, tierId, onSelectTier, onTierC
             </div>
           </div>
           {/* Selection box at the top with two slots */}
-          <div className="bg-accent/10 border border-accent/30 rounded-md p-4 shadow-sm">
+          <div className="bg-white border border-border rounded-md p-4 shadow-[var(--shadow-soft)]">
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm font-medium text-foreground">Choose a matching pair</div>
               {recentMiss && (

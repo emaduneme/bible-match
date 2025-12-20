@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { GameBoard } from "@/components/GameBoard";
-import { Book } from "lucide-react";
+import { Book, Hand, Link, FileText, Lock, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { getThemes, ThemeId, TierId } from "@/data/themesWithTiers";
@@ -13,9 +13,12 @@ import {
   isTierUnlocked,
   ThemeProgressMap,
 } from "@/lib/progress";
+import { WelcomeScreen } from "@/components/WelcomeScreen";
+import { hasCompletedIntro } from "@/lib/player";
 
 const Index = () => {
   const themes = useMemo(() => getThemes(), []);
+  const [showIntro, setShowIntro] = useState(() => !hasCompletedIntro());
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedThemeId, setSelectedThemeId] = useState<ThemeId | null>(null);
   const [selectedTierId, setSelectedTierId] = useState<TierId | null>(null);
@@ -60,6 +63,11 @@ const Index = () => {
     !!selectedTierId &&
     isTierUnlocked(progress, selectedThemeId, selectedTierId as TierId);
 
+  // Show welcome screen for first-time users
+  if (showIntro) {
+    return <WelcomeScreen onComplete={() => setShowIntro(false)} />;
+  }
+
   if (gameStarted && canStartGame) {
     return (
       <GameBoard
@@ -78,12 +86,12 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-3 md:p-4 animate-fade-in">
+    <div className="min-h-screen bg-muted flex items-center justify-center p-3 md:p-4 animate-fade-in">
       <div className="max-w-4xl w-full space-y-10 md:space-y-12">
         {/* Hero Section */}
         <div className="text-center space-y-6">
           <div className="flex justify-center mb-4">
-            <div className="p-6 bg-gradient-to-br from-primary to-accent rounded-full shadow-[var(--shadow-elevated)]">
+            <div className="p-6 bg-primary rounded-full shadow-[var(--shadow-elevated)]">
               <Book className="h-16 w-16 text-primary-foreground" />
             </div>
           </div>
@@ -95,29 +103,44 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Description Card */}
-        <Card className="p-8 shadow-[var(--shadow-elevated)] bg-gradient-to-br from-card to-card/90">
+        {/* How to Play Card */}
+        <Card className="p-8 shadow-[var(--shadow-elevated)] bg-white">
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-foreground text-center">
               How to Play
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center space-y-3">
+                <div className="flex justify-center">
+                  <div className="p-3 bg-muted rounded-full">
+                    <Hand className="h-6 w-6 text-foreground" />
+                  </div>
+                </div>
                 <h3 className="font-semibold text-foreground">Select Cards</h3>
                 <p className="text-sm text-muted-foreground">
-                  Click on two cards to form a pair
+                  Click on two cards to flip them over and reveal what's underneath.
                 </p>
               </div>
               <div className="text-center space-y-3">
+                <div className="flex justify-center">
+                  <div className="p-3 bg-muted rounded-full">
+                    <Link className="h-6 w-6 text-foreground" />
+                  </div>
+                </div>
                 <h3 className="font-semibold text-foreground">Find Matches</h3>
                 <p className="text-sm text-muted-foreground">
-                  Match biblical names, places, and events that are connected
+                  Match biblical names, places, and events that share a meaningful connection.
                 </p>
               </div>
               <div className="text-center space-y-3">
+                <div className="flex justify-center">
+                  <div className="p-3 bg-muted rounded-full">
+                    <FileText className="h-6 w-6 text-foreground" />
+                  </div>
+                </div>
                 <h3 className="font-semibold text-foreground">Learn Scripture</h3>
                 <p className="text-sm text-muted-foreground">
-                  Discover the story behind each connection with verse references
+                  Discover the story behind each connection with direct verse references.
                 </p>
               </div>
             </div>
@@ -125,10 +148,12 @@ const Index = () => {
         </Card>
 
         {/* Theme picker */}
-        <Card className="p-6 bg-gradient-to-br from-card to-card/90 shadow-[var(--shadow-elevated)]">
+        <Card className="p-6 bg-white shadow-[var(--shadow-elevated)]">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <h2 className="text-xl font-semibold">Choose a Theme</h2>
-            <p className="text-sm text-muted-foreground">Each theme contains tiered decks (Yellow → Blue).</p>
+            <p className="text-sm text-muted-foreground">
+              Each theme contains tiered decks (<span className="text-amber-500">Yellow</span> → <span className="text-blue-500">Blue</span>).
+            </p>
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {themes.map((theme) => {
@@ -144,7 +169,7 @@ const Index = () => {
                     setSelectedTierId(defaultTier);
                   }}
                   className={cn(
-                    "text-left rounded-md border bg-card/80 p-4 transition-[var(--transition-smooth)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                    "relative text-left rounded-lg border bg-white p-5 transition-[var(--transition-smooth)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary overflow-hidden",
                     isSelected && "ring-2 ring-primary"
                   )}
                   aria-pressed={isSelected}
@@ -153,16 +178,46 @@ const Index = () => {
                     <div className="font-semibold text-foreground">{theme.title}</div>
                     <Badge variant="secondary">{theme.tiers.length} tiers</Badge>
                   </div>
-                  <p className="mt-1 text-sm text-muted-foreground">{theme.description}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">{theme.description}</p>
+                  <div className="mt-3 text-sm font-medium text-primary flex items-center">
+                    Start Playing <ArrowRight className="ml-1 h-4 w-4" />
+                  </div>
                 </button>
               );
             })}
+
+            {/* Coming Soon placeholders */}
+            <div className="relative text-left rounded-lg border bg-white p-5 opacity-60 cursor-not-allowed overflow-hidden">
+              <div className="flex items-center justify-between gap-2">
+                <div className="font-semibold text-foreground">Miracles & Events</div>
+                <Badge variant="outline" className="text-muted-foreground">Coming Soon</Badge>
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Extraordinary events and divine interventions recorded in scripture.
+              </p>
+              <div className="mt-3 text-sm text-muted-foreground flex items-center">
+                Locked <Lock className="ml-1 h-3 w-3" />
+              </div>
+            </div>
+
+            <div className="relative text-left rounded-lg border bg-white p-5 opacity-60 cursor-not-allowed overflow-hidden">
+              <div className="flex items-center justify-between gap-2">
+                <div className="font-semibold text-foreground">Parables</div>
+                <Badge variant="outline" className="text-muted-foreground">Coming Soon</Badge>
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Match the stories Jesus told with their deeper spiritual meanings.
+              </p>
+              <div className="mt-3 text-sm text-muted-foreground flex items-center">
+                Locked <Lock className="ml-1 h-3 w-3" />
+              </div>
+            </div>
           </div>
         </Card>
 
         {/* Tier picker */}
         {selectedTheme && (
-          <Card className="p-6 bg-gradient-to-br from-card to-card/90 shadow-[var(--shadow-elevated)]">
+          <Card className="p-6 bg-white shadow-[var(--shadow-elevated)]">
             <div className="flex flex-col gap-2">
               <h2 className="text-xl font-semibold">Choose a Tier</h2>
               <p className="text-sm text-muted-foreground">
@@ -180,7 +235,7 @@ const Index = () => {
                     onClick={() => unlocked && setSelectedTierId(tier.id)}
                     disabled={!unlocked}
                     className={cn(
-                      "text-left rounded-md border bg-card p-4 transition-[var(--transition-smooth)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50 disabled:cursor-not-allowed",
+                      "text-left rounded-md border bg-white p-4 transition-[var(--transition-smooth)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50 disabled:cursor-not-allowed",
                       isSelected && "ring-2 ring-primary"
                     )}
                     aria-pressed={isSelected}
@@ -218,8 +273,21 @@ const Index = () => {
         </div>
 
         {/* Footer */}
-        <footer className="text-center py-6 text-sm text-muted-foreground border-t border-border/50">
-          2025
+        <footer className="text-center py-6 space-y-3 border-t border-border/50">
+          <p className="text-sm text-muted-foreground">
+            © 2025 Bible Match. All rights reserved.
+          </p>
+          <div className="flex justify-center gap-6 text-sm text-muted-foreground">
+            <button type="button" className="hover:text-foreground transition-colors">
+              Privacy Policy
+            </button>
+            <button type="button" className="hover:text-foreground transition-colors">
+              Terms of Service
+            </button>
+            <button type="button" className="hover:text-foreground transition-colors">
+              Contact
+            </button>
+          </div>
         </footer>
       </div>
     </div>

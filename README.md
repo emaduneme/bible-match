@@ -1,17 +1,23 @@
-# Bible Link Match
+# Bible Match
 
-An interactive Bible-themed matching game that helps players learn about biblical connections between people, places, and events. Test your knowledge of Scripture by matching related pairs and discover verses that illuminate each connection!
+A daily Bible puzzle. Every day, everyone gets the same 8 cards. Find the 4 pairs that belong together, then share a spoiler-free result.
 
-## Game Features
+## How It Works
 
-- **Theme-First Play**: Pick a theme (People & Relationships, People & Places, People & Events) and stay immersed in it
-- **Built-In Difficulty Curve**: Each theme embeds tiered decks (Yellow → Green → Blue) with rising pair counts and fewer lives
-- **Progress That Sticks**: Completed tiers unlock the next tier for that theme and are remembered via local storage
-- **Fresh Rotations**: Each tier has a larger pool of pairs so replays feel new, and recently used matches are rotated out automatically
-- **Educational Feedback**: Every correct match reveals its verse reference and explanatory note
-- **Accessibility & Mobile-First**: Keyboard-friendly controls, `aria-live` updates, dense mobile grid
-- **Score + Lives HUD**: Progress bar, remaining lives indicator, and review dialog for each attempt
-- **Modern UI**: Smooth animations and elegant design using shadcn-ui components
+- **One puzzle a day.** The puzzle is picked by the player's local date from a hand-written list. No backend.
+- **Everyone finishes.** There is no game over. Your score is how few misses you make.
+- **Shareable result.** One square per guess, in order:
+
+```
+📖 Bible Match #14
+🟩🟥🟩🟩🟩
+1 miss
+
+https://bible-match.vercel.app
+```
+
+- **Learn as you go.** Each correct match shows its verse and a short note. The result screen recaps all 4.
+- **Streaks.** Stats live in `localStorage`. A refresh resumes the game instead of resetting it.
 
 ## Getting Started
 
@@ -36,7 +42,9 @@ npm install
 npm run dev
 ```
 
-The game will open in your browser at `http://localhost:5173`
+The game will open in your browser at `http://127.0.0.1:8080`
+
+Run the tests with `npm test`.
 
 ## Tech Stack
 
@@ -51,70 +59,34 @@ The game will open in your browser at `http://localhost:5173`
 ## Project Structure
 
 ```
-bible-match/
-├── src/
-│   ├── components/
-│   │   ├── GameBoard.tsx      # Main game logic and UI
-│   │   ├── MatchCard.tsx      # Individual card component
-│   │   ├── FeedbackDialog.tsx # Success/feedback modal
-│   │   └── VictoryScreen.tsx  # End-game screen
-│   ├── data/
-│   │   ├── themesWithTiers.json # Theme + tier dataset (yellow/green/blue)
-│   │   ├── themesWithTiers.ts   # Helper utilities for theme/tier lookup
-│   │   ├── matchPairs.json      # Shared Bible pairs with verses (reference library)
-│   │   └── books.json           # Bible book metadata
-│   ├── pages/
-│   │   ├── Index.tsx          # Home/landing page
-│   │   └── NotFound.tsx       # 404 page
-│   └── lib/
-│       ├── utils.ts           # Utility functions
-│       └── storage.ts         # Local storage helpers
-├── public/                    # Static assets
-└── package.json
+src/
+├── components/
+│   ├── GameBoard.tsx        # The daily board: guesses, misses, feedback
+│   ├── ResultScreen.tsx     # Result grid, stats, share button, recap
+│   ├── WelcomeScreen.tsx    # First visit: how to play + optional name
+│   ├── MatchCard.tsx        # One card
+│   └── FeedbackDialog.tsx   # Verse + note after a correct match
+├── data/
+│   ├── matchPairs.json      # All pairs (the authoring library)
+│   └── dailyPuzzles.ts      # LAUNCH_DATE + the ordered puzzle list
+├── lib/
+│   ├── daily.ts             # Local date -> puzzle, saved progress, seeded shuffle
+│   ├── storage.ts           # Streak/stats + share text
+│   └── player.ts            # Optional player name
+└── pages/Index.tsx          # Welcome -> board -> result
 ```
 
-## How to Play
+## Writing Puzzles
 
-1. **Pick a Theme**: Choose the topic that excites you most (relationships, places, events)
-2. **Select a Tier**: Start with the Yellow deck for a warm-up and climb toward the tougher Blue decks
-3. **Match Pairs**: Tap any two cards; matching them removes the pair and awards points
-4. **Learn as You Go**: Each correct match surfaces its verse and a quick historical note
-5. **Advance or Explore**: After a win, continue to the next tier in that theme or jump back to explore another theme
+1. Add new pairs to `src/data/matchPairs.json`. Give each one a new, unique `id`.
+2. Append a puzzle to `dailyPuzzles` in `src/data/dailyPuzzles.ts`: a `theme` and exactly 4 `pairIds`.
+3. **Only append.** Do not reorder or remove old puzzles; that changes past puzzle numbers.
+4. Run `npm test`. It checks that IDs exist, no card name repeats on a board, and no pair is used twice.
+5. Check by hand that no card has a second *true* partner on the same board (e.g. "Joseph" and "Mary"). The game only accepts the pair you wrote.
 
-## Themes, Tiers & Dataset
+When the list runs out, players see an "all caught up" screen. It does not repeat old puzzles.
 
-- Source file: `src/data/themesWithTiers.json`
-- Each theme entry defines:
-  - `id`, `title`, `description`, `icon`
-  - `tiers[]`: ordered difficulty steps (e.g., Yellow → Green → Blue)
-- Each tier defines:
-  - `id`, `label`, `difficulty`, `color`, `pairCount`, `maxLives`
-  - `pairs[]`: **acts as the full pool**. Each playthrough randomly samples `pairCount` entries from this list, so give every tier more pairs than it needs. Each entry is shaped like `MatchPair` (fields `id`, `a`, `b`, `relationship`, `verse`, `note`, optional `book`)
-- `src/data/themesWithTiers.ts` loads the JSON, normalizes `pairCount`/`maxLives`, and exposes helpers (`getThemes`, `getTier`, `getNextTier`)
-- To add or edit content:
-  1. Duplicate a theme or tier in `themesWithTiers.json`
-  2. Provide at least 4 pairs for the entry-level tier, then raise difficulty by increasing pair count or obscurity
-  3. Make sure `pairs.length >= pairCount` so the random rotation has something to work with
-  4. Run `npm run build` (or `npm run lint`) to ensure the JSON parses cleanly
-- The home page lists themes; selecting one reveals its tiers. `GameBoard` launches with `{ themeId, tierId }` and Victory suggests the next tier automatically.
-
-## Progress Persistence
-
-- File: `src/lib/progress.ts`
-- Stores unlocked tiers per theme in `localStorage` (`bible-match:theme-progress:v1`)
-- Guarantees the first tier of every theme is unlocked by default
-- Helper functions:
-  - `loadProgress(themes)` → loads + normalizes progress
-  - `saveProgress(progress)` → persists to storage
-  - `unlockTierProgress(progress, themeId, tierId)` → returns a new map with the tier unlocked
-  - `isTierUnlocked(progress, themeId, tierId)` → convenience check for the UI
-- `Index.tsx` consumes these helpers to disable locked tiers and remember player progress, while `GameBoard` notifies the parent when a tier is completed so the next tier unlocks automatically.
-
-### Pair Rotation History
-
-- File: `src/lib/tierHistory.ts`
-- Tracks the most recently used pair IDs per `{themeId}:{tierId}` in `localStorage`
-- `GameBoard` samples `pairCount` cards from the tier’s `pairs` pool, preferring pairs that have not appeared recently. When the pool is exhausted it resets the history and starts over, so replays feel novel while still cycling through the full set.
+**Preview any puzzle** with `?day=N`, e.g. `http://127.0.0.1:8080/?day=12`. Nothing is saved in preview mode.
 
 ## Contributing
 

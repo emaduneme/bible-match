@@ -1,85 +1,90 @@
-// Lean localStorage utilities for streaks & stats
+// Lean localStorage utilities for streaks, stats, and the share text.
+import { daysBetween } from "./daily";
 
-interface GameStats {
+export interface GameStats {
   streak: number;
-  lastPlayed: string; // ISO date
+  maxStreak: number;
+  lastPlayed: string; // local date key, "YYYY-MM-DD"
   gamesPlayed: number;
-  gamesWon: number;
+  perfectGames: number;
 }
 
 const STATS_KEY = "bible-match-stats";
 
+const emptyStats = (): GameStats => ({
+  streak: 0,
+  maxStreak: 0,
+  lastPlayed: "",
+  gamesPlayed: 0,
+  perfectGames: 0,
+});
+
 export function getStats(): GameStats {
   try {
     const stored = localStorage.getItem(STATS_KEY);
-    if (!stored) return { streak: 0, lastPlayed: "", gamesPlayed: 0, gamesWon: 0 };
-    return JSON.parse(stored);
+    if (!stored) return emptyStats();
+    return { ...emptyStats(), ...JSON.parse(stored) };
   } catch {
-    return { streak: 0, lastPlayed: "", gamesPlayed: 0, gamesWon: 0 };
+    return emptyStats();
   }
 }
 
-export function saveGameResult(won: boolean) {
+/**
+ * Record that today's puzzle was finished. Safe to call more than once on
+ * the same day: only the first call counts.
+ */
+export function recordCompletion(dateKey: string, mistakes: number): GameStats {
   const stats = getStats();
-  const today = new Date().toISOString().split("T")[0];
-  
+  if (stats.lastPlayed === dateKey) return stats;
+
+  const gap = stats.lastPlayed ? daysBetween(stats.lastPlayed, dateKey) : Infinity;
+  stats.streak = gap === 1 ? stats.streak + 1 : 1;
+  stats.maxStreak = Math.max(stats.maxStreak, stats.streak);
   stats.gamesPlayed++;
-  if (won) stats.gamesWon++;
+  if (mistakes === 0) stats.perfectGames++;
+  stats.lastPlayed = dateKey;
 
-  // Streak logic
-  if (stats.lastPlayed) {
-    const lastDate = new Date(stats.lastPlayed);
-    const todayDate = new Date(today);
-    const diffDays = Math.floor((todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) {
-      // Same day, no change
-    } else if (diffDays === 1 && won) {
-      stats.streak++;
-    } else {
-      stats.streak = won ? 1 : 0;
-    }
-  } else {
-    stats.streak = won ? 1 : 0;
+  try {
+    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  } catch {
+    // ignore
   }
-
-  stats.lastPlayed = today;
-  localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  return stats;
 }
 
 // ========================================
 // CONFIGURE YOUR SHARE LINK HERE
 // ========================================
-const SHARE_LINK = "https://bible-match.vercel.app";
+export const SHARE_LINK = "https://bible-match.vercel.app";
 // ========================================
 
-export function getShareText(score: number, total: number, theme: string): string {
-  const perfect = score === total;
-  
-  // Visual score grid (like Wordle)
-  const boxes = perfect
-    ? "🟨".repeat(total)
-    : "🟨".repeat(score) + "⬜".repeat(total - score);
+const SQUARES_PER_ROW = 8;
 
-  // Dynamic headline based on performance
-  let headline: string;
-  if (perfect) {
-    headline = "I mastered today's Bible Match!";
-  } else if (score >= total * 0.75) {
-    headline = "I'm getting closer to mastering Bible Match!";
-  } else {
-    headline = "I'm learning new biblical connections!";
+export function countMistakes(guesses: boolean[]): number {
+  return guesses.filter((g) => !g).length;
+}
+
+export function getResultLine(mistakes: number): string {
+  if (mistakes === 0) return "Clean! (0 misses)";
+  return `${mistakes} ${mistakes === 1 ? "miss" : "misses"}`;
+}
+
+/** One square per guess, in order: 🟩 correct, 🟥 miss. */
+export function getGuessSquares(guesses: boolean[]): string {
+  const squares = guesses.map((g) => (g ? "🟩" : "🟥"));
+  const rows: string[] = [];
+  for (let i = 0; i < squares.length; i += SQUARES_PER_ROW) {
+    rows.push(squares.slice(i, i + SQUARES_PER_ROW).join(""));
   }
+  return rows.join("\n");
+}
 
-  // Build the share message
+export function getShareText(puzzleNumber: number, guesses: boolean[]): string {
   return [
-    `📖 ${headline}`,
+    `📖 Bible Match #${puzzleNumber}`,
+    getGuessSquares(guesses),
+    getResultLine(countMistakes(guesses)),
     ``,
-    `${theme}`,
-    `${boxes} ${score}/${total}`,
-    ``,
-    `Think you know your Bible? Test your knowledge:`,
     SHARE_LINK,
   ].join("\n");
 }
-

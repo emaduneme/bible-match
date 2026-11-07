@@ -673,6 +673,230 @@
     "relationship": "preaching",
     "verse": "Acts 7:2",
     "note": "Stephen preached before the Jewish council."
+  },
+  {
+    "id": 6004,
+    "type": "pair",
+    "a": "Moses",
+    "b": "Joshua",
+    "relationship": "mentor",
+    "verse": "Deuteronomy 31:7",
+    "note": "Moses charged Joshua to lead Israel with courage."
+  },
+  {
+    "id": 5307,
+    "type": "pair",
+    "a": "Jehoiada",
+    "b": "Joash",
+    "relationship": "mentor",
+    "verse": "2 Chronicles 24:2",
+    "note": "Jehoiada guided young King Joash to follow the LORD."
+  },
+  {
+    "id": 6005,
+    "type": "pair",
+    "a": "Priscilla",
+    "b": "Apollos",
+    "relationship": "mentor",
+    "verse": "Acts 18:26",
+    "note": "They explained the way of God more accurately to Apollos."
+  },
+  {
+    "id": 6009,
+    "type": "pair",
+    "a": "Nehemiah",
+    "b": "Ezra",
+    "relationship": "companions",
+    "verse": "Nehemiah 8:1",
+    "note": "Together they led Israel's spiritual renewal."
+  },
+  {
+    "id": 6101,
+    "type": "pair",
+    "a": "Abraham",
+    "b": "Beersheba",
+    "relationship": "resting_place",
+    "verse": "Genesis 21:33",
+    "note": "Abraham planted a tamarisk tree and called on the LORD there."
+  },
+  {
+    "id": 6102,
+    "type": "pair",
+    "a": "Paul",
+    "b": "Athens",
+    "relationship": "preaching",
+    "verse": "Acts 17:22",
+    "note": "Paul addressed the council on Mars Hill about the unknown God."
+  },
+  {
+    "id": 6104,
+    "type": "pair",
+    "a": "Philip",
+    "b": "Samaria",
+    "relationship": "mission",
+    "verse": "Acts 8:5",
+    "note": "Philip proclaimed Christ in Samaria and saw great joy in the city."
+  },
+  {
+    "id": 5107,
+    "type": "pair",
+    "a": "Paul",
+    "b": "Shipwreck",
+    "relationship": "deliverance",
+    "verse": "Acts 27:44",
+    "note": "Paul and the crew reached shore safely after the ship broke apart."
+  },
+  {
+    "id": 6107,
+    "type": "pair",
+    "a": "Obadiah",
+    "b": "Edom",
+    "relationship": "prophecy",
+    "verse": "Obadiah 1:1",
+    "note": "Obadiah proclaimed judgment against Edom."
+  },
+  {
+    "id": 5303,
+    "type": "pair",
+    "a": "Zephaniah",
+    "b": "Day of the LORD",
+    "relationship": "prophecy",
+    "verse": "Zephaniah 1:7",
+    "note": "He proclaimed the coming day of the LORD."
+  },
+  {
+    "id": 5302,
+    "type": "pair",
+    "a": "Haggai",
+    "b": "Paneled Houses",
+    "relationship": "rebuke",
+    "verse": "Haggai 1:4",
+    "note": "He challenged the people to rebuild the temple first."
+  },
+  {
+    "id": 6105,
+    "type": "pair",
+    "a": "Ezekiel",
+    "b": "Chebar Canal",
+    "relationship": "revelation",
+    "verse": "Ezekiel 1:1",
+    "note": "Ezekiel saw visions of God by the Chebar Canal."
+  },
+  {
+    "id": 6106,
+    "type": "pair",
+    "a": "John",
+    "b": "Patmos",
+    "relationship": "exile",
+    "verse": "Revelation 1:9",
+    "note": "John was on Patmos when he received the Revelation."
+  },
+  {
+    "id": 6210,
+    "type": "pair",
+    "a": "Samson",
+    "b": "Delilah",
+    "relationship": "betrayal",
+    "verse": "Judges 16:17",
+    "note": "Samson revealed the secret of his strength to Delilah."
+  },
+  {
+    "id": 6211,
+    "type": "pair",
+    "a": "Shadrach",
+    "b": "Fiery Furnace",
+    "relationship": "deliverance",
+    "verse": "Daniel 3:25",
+    "note": "The three men walked unharmed in the fire."
+  },
+  {
+    "id": 6201,
+    "type": "pair",
+    "a": "Moses",
+    "b": "Red Sea",
+    "relationship": "miracle",
+    "verse": "Exodus 14:21",
+    "note": "Moses stretched his hand over the sea and the waters parted."
+  },
+  {
+    "id": 6202,
+    "type": "pair",
+    "a": "Jesus",
+    "b": "Wedding at Cana",
+    "relationship": "miracle",
+    "verse": "John 2:9",
+    "note": "Jesus turned water into wine at the wedding feast."
+  },
+  {
+    "id": 6203,
+    "type": "pair",
+    "a": "Elisha",
+    "b": "Widow's Oil",
+    "relationship": "miracle",
+    "verse": "2 Kings 4:5-7",
+    "note": "Oil kept flowing until every jar was filled."
+  },
+  {
+    "id": 6204,
+    "type": "pair",
+    "a": "Peter",
+    "b": "Beautiful Gate Beggar",
+    "relationship": "healing",
+    "verse": "Acts 3:6-8",
+    "note": "Peter lifted the lame man who then walked and praised God."
+  },
+  {
+    "id": 5301,
+    "type": "pair",
+    "a": "Habakkuk",
+    "b": "Watchtower",
+    "relationship": "prayer",
+    "verse": "Habakkuk 2:1",
+    "note": "He stationed himself to watch for God's answer."
+  },
+  {
+    "id": 5304,
+    "type": "pair",
+    "a": "Gideon",
+    "b": "Fleece",
+    "relationship": "sign",
+    "verse": "Judges 6:36-40",
+    "note": "Gideon asked for dew signs to confirm God's call."
+  },
+  {
+    "id": 5305,
+    "type": "pair",
+    "a": "Phoebe",
+    "b": "Cenchreae",
+    "relationship": "service",
+    "verse": "Romans 16:1",
+    "note": "She served the church at Cenchreae."
+  },
+  {
+    "id": 6213,
+    "type": "pair",
+    "a": "Hezekiah",
+    "b": "Assyrian Army",
+    "relationship": "deliverance",
+    "verse": "2 Kings 19:35",
+    "note": "The angel of the LORD struck down 185,000 Assyrians."
+  },
+  {
+    "id": 5308,
+    "type": "pair",
+    "a": "Anna",
+    "b": "Temple Fasting",
+    "relationship": "devotion",
+    "verse": "Luke 2:37",
+    "note": "Anna worshiped with fasting and prayer night and day in the temple."
+  },
+  {
+    "id": 6206,
+    "type": "pair",
+    "a": "Ananias",
+    "b": "Saul",
+    "relationship": "healing",
+    "verse": "Acts 9:17",
+    "note": "Ananias laid hands on Saul so he could see again."
   }
 ]
-

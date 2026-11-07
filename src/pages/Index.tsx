@@ -1,297 +1,119 @@
-import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useMemo, useState } from "react";
+import { Book } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { GameBoard } from "@/components/GameBoard";
-import { Book, Hand, Link, FileText, Lock, ArrowRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { getThemes, ThemeId, TierId } from "@/data/themesWithTiers";
-import {
-  loadProgress,
-  saveProgress,
-  unlockTierProgress,
-  isTierUnlocked,
-  ThemeProgressMap,
-} from "@/lib/progress";
+import { ResultScreen } from "@/components/ResultScreen";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
-import { hasCompletedIntro } from "@/lib/player";
+import { hasCompletedIntro, getPlayerName } from "@/lib/player";
+import { getPuzzleByNumber, ResolvedPuzzle } from "@/data/dailyPuzzles";
+import {
+  DailyRecord,
+  getDailyStatus,
+  loadDailyRecord,
+  saveDailyRecord,
+} from "@/lib/daily";
+import { getStats, recordCompletion, GameStats, countMistakes } from "@/lib/storage";
+
+/**
+ * Preview any puzzle with ?day=N (e.g. /?day=3). Nothing is saved.
+ * Useful for checking puzzles before their date.
+ */
+function getPreviewPuzzle(): ResolvedPuzzle | null {
+  const raw = new URLSearchParams(window.location.search).get("day");
+  if (!raw) return null;
+  return getPuzzleByNumber(Number(raw));
+}
 
 const Index = () => {
-  const themes = useMemo(() => getThemes(), []);
   const [showIntro, setShowIntro] = useState(() => !hasCompletedIntro());
-  const [gameStarted, setGameStarted] = useState(false);
-  const [selectedThemeId, setSelectedThemeId] = useState<ThemeId | null>(null);
-  const [selectedTierId, setSelectedTierId] = useState<TierId | null>(null);
-  const [progress, setProgress] = useState<ThemeProgressMap>(() => loadProgress(themes));
+  const previewPuzzle = useMemo(getPreviewPuzzle, []);
+  const status = useMemo(() => getDailyStatus(), []);
 
-  const selectedTheme = useMemo(
-    () => themes.find((theme) => theme.id === selectedThemeId) ?? null,
-    [themes, selectedThemeId]
+  const today = status.kind === "puzzle" ? status : null;
+  const [record, setRecord] = useState<DailyRecord | null>(() =>
+    today ? loadDailyRecord(today.dateKey, today.puzzle.number) : null
   );
+  const [stats, setStats] = useState<GameStats>(() => getStats());
+  const [previewResult, setPreviewResult] = useState<boolean[] | null>(null);
 
-  useEffect(() => {
-    setProgress(loadProgress(themes));
-  }, [themes]);
-
-  useEffect(() => {
-    if (!selectedTheme) return;
-    const unlockedTiers = progress[selectedTheme.id] ?? [];
-    const fallbackTierId =
-      unlockedTiers.find((tier) => selectedTheme.tiers.some((t) => t.id === tier)) ??
-      selectedTheme.tiers[0]?.id ??
-      null;
-    if (!fallbackTierId) {
-      setSelectedTierId(null);
-      return;
-    }
-    if (!selectedTierId || !unlockedTiers.includes(selectedTierId)) {
-      setSelectedTierId(fallbackTierId);
-    }
-  }, [selectedTheme, selectedTierId, progress]);
-
-  const handleTierComplete = (theme: ThemeId, tier: TierId, nextTier?: TierId) => {
-    setProgress((prev) => {
-      let updated = unlockTierProgress(prev, theme, tier);
-      updated = unlockTierProgress(updated, theme, nextTier);
-      saveProgress(updated);
-      return updated;
-    });
-  };
-
-  const canStartGame =
-    !!selectedThemeId &&
-    !!selectedTierId &&
-    isTierUnlocked(progress, selectedThemeId, selectedTierId as TierId);
-
-  // Show welcome screen for first-time users
   if (showIntro) {
     return <WelcomeScreen onComplete={() => setShowIntro(false)} />;
   }
 
-  if (gameStarted && canStartGame) {
+  // Preview mode: play any puzzle, save nothing.
+  if (previewPuzzle) {
+    if (previewResult) {
+      return <ResultScreen puzzle={previewPuzzle} guesses={previewResult} stats={null} isPreview />;
+    }
     return (
       <GameBoard
-        onBackToHome={() => {
-          setGameStarted(false);
-        }}
-        themeId={selectedThemeId}
-        tierId={selectedTierId as TierId}
-        onSelectTier={(themeId, tierId) => {
-          setSelectedThemeId(themeId);
-          setSelectedTierId(tierId);
-        }}
-        onTierComplete={handleTierComplete}
+        puzzle={previewPuzzle}
+        initialRecord={null}
+        onProgress={() => {}}
+        onComplete={(r) => setPreviewResult(r.guesses)}
+      />
+    );
+  }
+
+  if (status.kind === "prelaunch") {
+    const launch = new Date(`${status.launchDate}T00:00:00`);
+    const label = launch.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+    return (
+      <MessageScreen
+        title="Almost here"
+        body={`The first daily puzzle comes out on ${label}. See you then.`}
+      />
+    );
+  }
+
+  if (status.kind === "caught-up") {
+    return (
+      <MessageScreen
+        title="You're all caught up"
+        body={`You have reached the end of our ${status.lastNumber} puzzles. New ones are coming soon.`}
+      />
+    );
+  }
+
+  const { dateKey, puzzle } = status;
+
+  if (record?.completed) {
+    return (
+      <ResultScreen
+        puzzle={puzzle}
+        guesses={record.guesses}
+        stats={stats}
+        playerName={getPlayerName()}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-muted flex items-center justify-center p-3 md:p-4 animate-fade-in">
-      <div className="max-w-4xl w-full space-y-10 md:space-y-12">
-        {/* Hero Section */}
-        <div className="text-center space-y-6">
-          <div className="flex justify-center mb-4">
-            <div className="p-6 bg-primary rounded-full shadow-[var(--shadow-elevated)]">
-              <Book className="h-16 w-16 text-primary-foreground" />
-            </div>
-          </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground leading-tight">
-            Bible Match
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-            Test Your Knowledge of Biblical Connections
-          </p>
-        </div>
-
-        {/* How to Play Card */}
-        <Card className="p-8 shadow-[var(--shadow-elevated)] bg-white">
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-foreground text-center">
-              How to Play
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center space-y-3">
-                <div className="flex justify-center">
-                  <div className="p-3 bg-muted rounded-full">
-                    <Hand className="h-6 w-6 text-foreground" />
-                  </div>
-                </div>
-                <h3 className="font-semibold text-foreground">Select Cards</h3>
-                <p className="text-sm text-muted-foreground">
-                  Click on two cards to flip them over and reveal what's underneath.
-                </p>
-              </div>
-              <div className="text-center space-y-3">
-                <div className="flex justify-center">
-                  <div className="p-3 bg-muted rounded-full">
-                    <Link className="h-6 w-6 text-foreground" />
-                  </div>
-                </div>
-                <h3 className="font-semibold text-foreground">Find Matches</h3>
-                <p className="text-sm text-muted-foreground">
-                  Match biblical names, places, and events that share a meaningful connection.
-                </p>
-              </div>
-              <div className="text-center space-y-3">
-                <div className="flex justify-center">
-                  <div className="p-3 bg-muted rounded-full">
-                    <FileText className="h-6 w-6 text-foreground" />
-                  </div>
-                </div>
-                <h3 className="font-semibold text-foreground">Learn Scripture</h3>
-                <p className="text-sm text-muted-foreground">
-                  Discover the story behind each connection with direct verse references.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Theme picker */}
-        <Card className="p-6 bg-white shadow-[var(--shadow-elevated)]">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <h2 className="text-xl font-semibold">Choose a Theme</h2>
-            <p className="text-sm text-muted-foreground">
-              Each theme contains tiered decks (<span className="text-amber-500">Yellow</span> → <span className="text-blue-500">Blue</span>).
-            </p>
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {themes.map((theme) => {
-              const isSelected = selectedThemeId === theme.id;
-              const unlockedTiers = progress[theme.id] ?? [];
-              const defaultTier = unlockedTiers[0] ?? theme.tiers[0]?.id ?? null;
-              return (
-                <button
-                  key={theme.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedThemeId(theme.id);
-                    setSelectedTierId(defaultTier);
-                  }}
-                  className={cn(
-                    "relative text-left rounded-lg border bg-white p-5 transition-[var(--transition-smooth)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary overflow-hidden",
-                    isSelected && "ring-2 ring-primary"
-                  )}
-                  aria-pressed={isSelected}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="font-semibold text-foreground">{theme.title}</div>
-                    <Badge variant="secondary">{theme.tiers.length} tiers</Badge>
-                  </div>
-                  <p className="mt-2 text-sm text-muted-foreground">{theme.description}</p>
-                  <div className="mt-3 text-sm font-medium text-primary flex items-center">
-                    Start Playing <ArrowRight className="ml-1 h-4 w-4" />
-                  </div>
-                </button>
-              );
-            })}
-
-            {/* Coming Soon placeholders */}
-            <div className="relative text-left rounded-lg border bg-white p-5 opacity-60 cursor-not-allowed overflow-hidden">
-              <div className="flex items-center justify-between gap-2">
-                <div className="font-semibold text-foreground">Miracles & Events</div>
-                <Badge variant="outline" className="text-muted-foreground">Coming Soon</Badge>
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Extraordinary events and divine interventions recorded in scripture.
-              </p>
-              <div className="mt-3 text-sm text-muted-foreground flex items-center">
-                Locked <Lock className="ml-1 h-3 w-3" />
-              </div>
-            </div>
-
-            <div className="relative text-left rounded-lg border bg-white p-5 opacity-60 cursor-not-allowed overflow-hidden">
-              <div className="flex items-center justify-between gap-2">
-                <div className="font-semibold text-foreground">Parables</div>
-                <Badge variant="outline" className="text-muted-foreground">Coming Soon</Badge>
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Match the stories Jesus told with their deeper spiritual meanings.
-              </p>
-              <div className="mt-3 text-sm text-muted-foreground flex items-center">
-                Locked <Lock className="ml-1 h-3 w-3" />
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Tier picker */}
-        {selectedTheme && (
-          <Card className="p-6 bg-white shadow-[var(--shadow-elevated)]">
-            <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-semibold">Choose a Tier</h2>
-              <p className="text-sm text-muted-foreground">
-                Start with Yellow for a warm-up, then climb toward the hidden gems in Blue.
-              </p>
-            </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {selectedTheme.tiers.map((tier) => {
-                const isSelected = selectedTierId === tier.id;
-                const unlocked = isTierUnlocked(progress, selectedTheme.id, tier.id);
-                return (
-                  <button
-                    key={tier.id}
-                    type="button"
-                    onClick={() => unlocked && setSelectedTierId(tier.id)}
-                    disabled={!unlocked}
-                    className={cn(
-                      "text-left rounded-md border bg-white p-4 transition-[var(--transition-smooth)] hover:shadow-[var(--shadow-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50 disabled:cursor-not-allowed",
-                      isSelected && "ring-2 ring-primary"
-                    )}
-                    aria-pressed={isSelected}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="font-semibold text-foreground">{tier.label}</div>
-                      <Badge variant="secondary">
-                        {unlocked ? tier.difficulty : "Locked"}
-                      </Badge>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {tier.pairCount} pairs • {tier.maxLives} lives
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </Card>
-        )}
-
-        {/* CTA Button */}
-        <div className="text-center space-y-4">
-          <Button
-            variant="hero"
-            size="lg"
-            onClick={() => setGameStarted(true)}
-            className="px-12 py-6 text-lg"
-            disabled={!canStartGame}
-          >
-            Start Playing
-          </Button>
-          <p className="text-sm text-muted-foreground italic">
-            "Study to show thyself approved" — 2 Timothy 2:15
-          </p>
-        </div>
-
-        {/* Footer */}
-        <footer className="text-center py-6 space-y-3 border-t border-border/50">
-          <p className="text-sm text-muted-foreground">
-            © 2025 Bible Match. All rights reserved.
-          </p>
-          <div className="flex justify-center gap-6 text-sm text-muted-foreground">
-            <button type="button" className="hover:text-foreground transition-colors">
-              Privacy Policy
-            </button>
-            <button type="button" className="hover:text-foreground transition-colors">
-              Terms of Service
-            </button>
-            <button type="button" className="hover:text-foreground transition-colors">
-              Contact
-            </button>
-          </div>
-        </footer>
-      </div>
-    </div>
+    <GameBoard
+      puzzle={puzzle}
+      initialRecord={record}
+      onProgress={(r) => saveDailyRecord(dateKey, r)}
+      onComplete={(r) => {
+        saveDailyRecord(dateKey, r);
+        setStats(recordCompletion(dateKey, countMistakes(r.guesses)));
+        setRecord(r);
+      }}
+    />
   );
 };
+
+const MessageScreen = ({ title, body }: { title: string; body: string }) => (
+  <div className="min-h-screen bg-muted flex items-center justify-center p-4 animate-fade-in">
+    <Card className="max-w-md w-full p-8 text-center space-y-4 bg-white shadow-[var(--shadow-elevated)]">
+      <div className="flex justify-center">
+        <div className="p-4 bg-primary rounded-full">
+          <Book className="h-8 w-8 text-primary-foreground" />
+        </div>
+      </div>
+      <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+      <p className="text-muted-foreground">{body}</p>
+    </Card>
+  </div>
+);
 
 export default Index;

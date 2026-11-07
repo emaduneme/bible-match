@@ -1,29 +1,22 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { MatchCard } from "./MatchCard";
 import { FeedbackDialog } from "./FeedbackDialog";
-import { VictoryScreen } from "./VictoryScreen";
-import { MatchPair } from "@/data/matchPairs";
-import { getTier, getNextTier, ThemeId, TierId } from "@/data/themesWithTiers";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import {
-  getRecentTierIds,
-  loadTierHistory,
-  recordTierHistory,
-  saveTierHistory,
-  TierHistoryMap,
-} from "@/lib/tierHistory";
+import type { ResolvedPuzzle } from "@/data/dailyPuzzles";
+import { DailyRecord, seededShuffle } from "@/lib/daily";
+import { countMistakes } from "@/lib/storage";
 
 interface GameBoardProps {
-  onBackToHome: () => void;
-  themeId?: ThemeId;
-  tierId?: TierId;
-  onSelectTier?: (themeId: ThemeId, tierId: TierId) => void;
-  onTierComplete?: (themeId: ThemeId, tierId: TierId, nextTierId?: TierId) => void;
+  puzzle: ResolvedPuzzle;
+  /** Saved progress for today, so a refresh resumes instead of restarting. */
+  initialRecord: DailyRecord | null;
+  /** Called after every guess with the updated record. */
+  onProgress: (record: DailyRecord) => void;
+  /** Called once all pairs are found and the last verse is dismissed. */
+  onComplete: (record: DailyRecord) => void;
 }
 
 interface CardItem {
@@ -32,330 +25,174 @@ interface CardItem {
   pairId: number;
 }
 
-export const GameBoard = ({ onBackToHome, themeId, tierId, onSelectTier, onTierComplete }: GameBoardProps) => {
-  const [cards, setCards] = useState<CardItem[]>([]);
+export const GameBoard = ({ puzzle, initialRecord, onProgress, onComplete }: GameBoardProps) => {
+  const totalPairs = puzzle.pairs.length;
+
+  // Same layout for every player on the same puzzle.
+  const allCards = useMemo<CardItem[]>(() => {
+    const cards = puzzle.pairs.flatMap((pair) => [
+      { id: `${pair.id}-a`, name: pair.a, pairId: pair.id },
+      { id: `${pair.id}-b`, name: pair.b, pairId: pair.id },
+    ]);
+    return seededShuffle(cards, puzzle.number);
+  }, [puzzle]);
+
+  const [guesses, setGuesses] = useState<boolean[]>(initialRecord?.guesses ?? []);
+  const [matchedPairIds, setMatchedPairIds] = useState<number[]>(
+    initialRecord?.matchedPairIds ?? []
+  );
+  // Matched cards leave the grid after a short animation.
+  const [removedPairIds, setRemovedPairIds] = useState<number[]>(
+    initialRecord?.matchedPairIds ?? []
+  );
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
-  const [matchedPairs, setMatchedPairs] = useState<number[]>([]);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [currentFeedback, setCurrentFeedback] = useState({ verse: "", note: "" });
-  const [gameComplete, setGameComplete] = useState(false);
-  const [score, setScore] = useState(0);
-  const [attemptsLeft, setAttemptsLeft] = useState(5);
-  const [gamePairs, setGamePairs] = useState<MatchPair[]>([]);
-  const [gameOver, setGameOver] = useState(false);
-  const [recentMiss, setRecentMiss] = useState<string | null>(null);
-  const [incorrectCards, setIncorrectCards] = useState<string[]>([]);
   const [correctCards, setCorrectCards] = useState<string[]>([]);
-  const [activeThemeId, setActiveThemeId] = useState<ThemeId | undefined>(themeId);
-  const [activeTierId, setActiveTierId] = useState<TierId | undefined>(tierId);
-  const [activeCombo, setActiveCombo] = useState(() => getTier(themeId, tierId));
+  const [incorrectCards, setIncorrectCards] = useState<string[]>([]);
+  const [recentMiss, setRecentMiss] = useState<string | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedback, setFeedback] = useState({ verse: "", note: "" });
 
-  useEffect(() => {
-    setActiveThemeId(themeId);
-    setActiveTierId(tierId);
-    setActiveCombo(getTier(themeId, tierId));
-  }, [themeId, tierId]);
+  const visibleCards = allCards.filter((c) => !removedPairIds.includes(c.pairId));
+  const mistakes = countMistakes(guesses);
+  const isDone = matchedPairIds.length === totalPairs;
 
-  const selectPairsForTier = useCallback((): MatchPair[] => {
-    if (!activeCombo || !activeThemeId || !activeTierId) return [];
-    const pool = activeCombo.tier.pairs;
-    if (pool.length === 0) return [];
-    const poolIds = new Set(pool.map((pair) => pair.id));
-    
-    // Load fresh history from storage to avoid circular dependency
-    const currentHistory = loadTierHistory();
-    const recent = getRecentTierIds(currentHistory, activeThemeId, activeTierId).filter((id) =>
-      poolIds.has(id)
-    );
-    const available = pool.filter((pair) => !recent.includes(pair.id));
-    const workingPool =
-      available.length >= activeCombo.tier.pairCount ? available : [...pool];
-    const shuffled = [...workingPool].sort(() => Math.random() - 0.5);
-    const selection = shuffled.slice(0, activeCombo.tier.pairCount);
-    
-    // Record history and save immediately
-    const updatedHistory = recordTierHistory(
-      currentHistory,
-      activeThemeId,
-      activeTierId,
-      selection.map((pair) => pair.id),
-      pool.length
-    );
-    saveTierHistory(updatedHistory);
-    
-    return selection;
-  }, [activeCombo, activeThemeId, activeTierId]);
-
-  const initializeGame = useCallback(() => {
-    if (!activeCombo) return;
-    const sourcePairs = selectPairsForTier();
-    if (sourcePairs.length === 0) return;
-    
-    // Store the selected pairs for the game logic
-    setGamePairs(sourcePairs);
-    
-    const gameCards: CardItem[] = [];
-    sourcePairs.forEach((pair) => {
-      gameCards.push(
-        { id: `${pair.id}-a`, name: pair.a, pairId: pair.id },
-        { id: `${pair.id}-b`, name: pair.b, pairId: pair.id }
-      );
-    });
-    const shuffled = gameCards.sort(() => Math.random() - 0.5);
-    setCards(shuffled);
-    setMatchedPairs([]);
-    setSelectedCards([]);
-    setScore(0);
-    setGameComplete(false);
-    setAttemptsLeft(activeCombo.tier.maxLives);
-    setGameOver(false);
-  }, [activeCombo, selectPairsForTier]);
-
-  useEffect(() => {
-    initializeGame();
-  }, [initializeGame]);
-
-  const nextTier = useMemo(() => {
-    if (!activeThemeId || !activeTierId) return undefined;
-    return getNextTier(activeThemeId, activeTierId);
-  }, [activeThemeId, activeTierId]);
+  const buildRecord = (nextGuesses: boolean[], nextMatched: number[]): DailyRecord => ({
+    puzzleNumber: puzzle.number,
+    guesses: nextGuesses,
+    matchedPairIds: nextMatched,
+    completed: nextMatched.length === totalPairs,
+  });
 
   const handleCardClick = (cardId: string) => {
-    const card = cards.find((c) => c.id === cardId);
-    if (!card || matchedPairs.includes(card.pairId)) {
-      return;
-    }
+    const card = allCards.find((c) => c.id === cardId);
+    if (!card || matchedPairIds.includes(card.pairId) || isDone) return;
 
-    // Allow deselection: if card is already selected, remove it
+    // Click a selected card again to deselect it.
     if (selectedCards.includes(cardId)) {
       setSelectedCards(selectedCards.filter((id) => id !== cardId));
       return;
     }
+    // A guess is already being checked.
+    if (selectedCards.length >= 2) return;
 
-    // Add vibration feedback on mobile (if supported)
-    if (navigator.vibrate) {
-      navigator.vibrate(10); // Short, subtle vibration
-    }
+    navigator.vibrate?.(10);
 
-    const newSelection = [...selectedCards, cardId];
-    setSelectedCards(newSelection);
-
-    if (newSelection.length === 2) {
-      checkMatch(newSelection);
-    }
+    const nextSelection = [...selectedCards, cardId];
+    setSelectedCards(nextSelection);
+    if (nextSelection.length === 2) checkMatch(nextSelection);
   };
 
-  const checkMatch = (selection: string[]) => {
-    const [card1Id, card2Id] = selection;
-    const card1 = cards.find((c) => c.id === card1Id);
-    const card2 = cards.find((c) => c.id === card2Id);
+  const checkMatch = ([firstId, secondId]: string[]) => {
+    const first = allCards.find((c) => c.id === firstId);
+    const second = allCards.find((c) => c.id === secondId);
+    if (!first || !second) return;
 
-    if (card1 && card2 && card1.pairId === card2.pairId) {
-      // Correct match
-      const pair = gamePairs.find((p) => p.id === card1.pairId);
-      if (pair) {
-        // Vibration feedback for success
-        if (navigator.vibrate) {
-          navigator.vibrate([50, 30, 50]); // Double pulse for success
-        }
-        
-        // Visual feedback: mark cards as correct
-        setCorrectCards([card1Id, card2Id]);
-        
-        setIsCorrect(true);
-        setCurrentFeedback({ verse: pair.verse, note: pair.note });
-        const newMatched = [...matchedPairs, card1.pairId];
-        setMatchedPairs(newMatched);
-        const newScore = score + 1;
-        setScore(newScore);
-        
-        // Remove matched cards from the board after animation
-        setTimeout(() => {
-          setCards((prev) => prev.filter((c) => c.pairId !== card1.pairId));
-          setCorrectCards([]);
-        }, 400);
-        
-        setShowFeedback(true);
+    const correct = first.pairId === second.pairId;
+    const nextGuesses = [...guesses, correct];
+    setGuesses(nextGuesses);
 
-        // Check if game is complete
-        const totalPairs = gamePairs.length || 5;
-        if (newMatched.length === totalPairs) {
-          if (activeThemeId && activeTierId) {
-            const upcomingTier = getNextTier(activeThemeId, activeTierId);
-            onTierComplete?.(activeThemeId, activeTierId, upcomingTier?.id);
-          }
-          setTimeout(() => {
-            setGameComplete(true);
-          }, 1500);
-        }
-      }
+    if (correct) {
+      const pair = puzzle.pairs.find((p) => p.id === first.pairId);
+      const nextMatched = [...matchedPairIds, first.pairId];
+      setMatchedPairIds(nextMatched);
+      onProgress(buildRecord(nextGuesses, nextMatched));
+
+      navigator.vibrate?.([50, 30, 50]);
+      setCorrectCards([firstId, secondId]);
+      setFeedback({ verse: pair?.verse ?? "", note: pair?.note ?? "" });
+      setShowFeedback(true);
+      setTimeout(() => {
+        setRemovedPairIds((prev) => [...prev, first.pairId]);
+        setCorrectCards([]);
+      }, 400);
     } else {
-      // Incorrect match
-      // Vibration feedback for error
-      if (navigator.vibrate) {
-        navigator.vibrate([30, 50, 30, 50, 30]); // Triple short pulse for error
-      }
-      
-      // Visual feedback: mark cards as incorrect
-      setIncorrectCards([card1Id, card2Id]);
-      
-      setIsCorrect(false);
-      setCurrentFeedback({ verse: "", note: "" });
-      const next = attemptsLeft - 1;
-      setAttemptsLeft(next);
-      setRecentMiss(card2?.name ?? null);
-      
-      // Briefly show selection then clear it and return cards to grid
+      onProgress(buildRecord(nextGuesses, matchedPairIds));
+
+      navigator.vibrate?.([30, 50, 30, 50, 30]);
+      setIncorrectCards([firstId, secondId]);
+      setRecentMiss(second.name);
       setTimeout(() => {
         setSelectedCards([]);
         setIncorrectCards([]);
       }, 600);
       setTimeout(() => setRecentMiss(null), 1200);
-      
-      if (next <= 0) {
-        // Delay ending to let the dialog show briefly
-        setTimeout(() => {
-          setGameOver(true);
-        }, 500);
-      }
     }
   };
 
   const handleContinue = () => {
     setShowFeedback(false);
     setSelectedCards([]);
+    if (isDone) onComplete(buildRecord(guesses, matchedPairIds));
   };
-
-  const handleRestart = () => {
-    initializeGame();
-  };
-
-  const totalPairs = gamePairs.length || 5;
-  const maxAttempts = activeCombo?.tier.maxLives ?? Math.min(5, totalPairs);
-  const progress = (matchedPairs.length / totalPairs) * 100;
-
-  const handleBackClick = () => {
-    const hasProgress = matchedPairs.length > 0 || selectedCards.length > 0;
-    if (!hasProgress || window.confirm("Leave game? Your current progress will be lost.")) {
-      onBackToHome();
-    }
-  };
-
-  const handleSelectNextTier = (nextTierId: TierId) => {
-    if (!activeThemeId) return;
-    onSelectTier?.(activeThemeId, nextTierId);
-    setShowFeedback(false);
-    setGameComplete(false);
-    setActiveTierId(nextTierId);
-    setActiveCombo(getTier(activeThemeId, nextTierId));
-  };
-
-  if (!activeCombo) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6">
-        <div className="text-center space-y-4">
-          <p className="text-lg text-muted-foreground">Select a theme and tier to start playing.</p>
-          <Button onClick={onBackToHome}>Back to home</Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (gameComplete) {
-    return (
-      <VictoryScreen
-        score={score}
-        totalPairs={totalPairs}
-        onRestart={handleRestart}
-        theme={activeCombo.theme.title}
-        nextTierLabel={nextTier ? `Continue to ${nextTier.label}` : undefined}
-        onSelectNextTier={nextTier ? () => handleSelectNextTier(nextTier.id) : undefined}
-        onSelectAnotherTheme={onBackToHome}
-      />
-    );
-  }
-
-  if (gameOver) {
-    return (
-      <div className="min-h-screen bg-white p-4 md:p-8 animate-fade-in">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h1 className="text-4xl font-bold text-destructive">Game Over</h1>
-          <p className="text-muted-foreground">You've used all attempts. Try again!</p>
-          <div className="text-2xl font-semibold">Score: {score} / {totalPairs}</div>
-          <Button variant="hero" size="lg" onClick={handleRestart}>Restart</Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white p-3 md:p-6 animate-fade-in">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8 space-y-4">
-            <div className="flex items-center justify-between">
-            <Button variant="outline" onClick={handleBackClick} size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Button>
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-6 space-y-4">
+          {/* Title */}
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Bible Match #{puzzle.number}</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">{puzzle.theme}</h1>
+            </div>
             <div className="text-right">
-              <p className="text-sm text-muted-foreground">Score</p>
-                <p className="text-2xl font-bold text-primary">{score} / {totalPairs}</p>
+              <p className="text-sm text-muted-foreground">Misses</p>
+              <p className={cn("text-2xl font-bold", mistakes === 0 ? "text-success" : "text-foreground")}>
+                {mistakes}
+              </p>
+              <span className="sr-only" aria-live="polite">
+                {mistakes} {mistakes === 1 ? "miss" : "misses"}
+              </span>
             </div>
           </div>
-          {activeCombo && (
-            <div className="flex flex-wrap items-center justify-between rounded-md border border-border/60 bg-white px-3 py-2 shadow-[var(--shadow-soft)]">
-              <div>
-                <p className="text-sm font-semibold text-foreground">{activeCombo.theme.title}</p>
-                <p className="text-xs text-muted-foreground">{activeCombo.theme.description}</p>
-              </div>
-              <Badge variant="secondary" aria-label={activeCombo.tier.label}>
-                {activeCombo.tier.label}
-              </Badge>
-            </div>
-          )}
+
+          {/* Progress */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Progress</span>
-              <span>{matchedPairs.length} of {totalPairs} matched</span>
+              <span>Find the {totalPairs} connections</span>
+              <span>
+                {matchedPairIds.length} of {totalPairs} found
+              </span>
             </div>
-            <Progress value={progress} className="h-3 bg-muted/40" />
-            <div className="flex items-center justify-between pt-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Lives remaining</span>
-                <div className="flex gap-1">
-                  {Array.from({ length: maxAttempts }).map((_, i) => (
-                    <Badge key={i} variant={i < attemptsLeft ? "default" : "secondary"} className="px-2">
-                      {i < attemptsLeft ? "●" : "○"}
-                    </Badge>
-                  ))}
-                </div>
+            <Progress value={(matchedPairIds.length / totalPairs) * 100} className="h-3 bg-muted/40" />
+            {guesses.length > 0 && (
+              <div className="flex flex-wrap gap-1 pt-1" aria-hidden="true">
+                {guesses.map((g, i) => (
+                  <span
+                    key={i}
+                    className={cn("h-3 w-3 rounded-sm", g ? "bg-success" : "bg-destructive")}
+                  />
+                ))}
               </div>
-              <span className="sr-only" aria-live="polite">Lives remaining: {attemptsLeft}</span>
-            </div>
+            )}
           </div>
-          {/* Selection box at the top with two slots */}
+
+          {/* Selection slots */}
           <div className="bg-white border border-border rounded-md p-4 shadow-[var(--shadow-soft)]">
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm font-medium text-foreground">Choose a matching pair</div>
               {recentMiss && (
-                <Badge variant="destructive" className="text-xs">{recentMiss} returned</Badge>
+                <Badge variant="destructive" className="text-xs">
+                  Not a match
+                </Badge>
               )}
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {[0,1].map((idx) => {
+              {[0, 1].map((idx) => {
                 const id = selectedCards[idx];
-                const c = id ? cards.find((x) => x.id === id) : undefined;
+                const c = id ? allCards.find((x) => x.id === id) : undefined;
                 return (
                   <div key={idx} className="space-y-1">
                     <div className="text-xs font-medium text-center text-foreground">
                       {idx === 0 ? "FIRST" : "SECOND"}
                     </div>
-                    <Card className={cn(
-                      "h-12 md:h-14 flex items-center justify-center border-2 transition-all",
-                      idx === 0 ? "border-primary/60 bg-primary/5" : "border-secondary/60 bg-secondary/5",
-                      c && "shadow-[var(--shadow-elevated)]"
-                    )}>
+                    <Card
+                      className={cn(
+                        "h-12 md:h-14 flex items-center justify-center border-2 transition-all px-2 text-center",
+                        idx === 0 ? "border-primary/60 bg-primary/5" : "border-secondary/60 bg-secondary/5",
+                        c && "shadow-[var(--shadow-elevated)]"
+                      )}
+                    >
                       <span className={cn("text-base md:text-lg font-medium", c && "animate-fade-scale-in")}>
                         {c ? c.name : "Tap a card"}
                       </span>
@@ -367,13 +204,13 @@ export const GameBoard = ({ onBackToHome, themeId, tierId, onSelectTier, onTierC
           </div>
         </div>
 
-        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-          {cards.map((card) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+          {visibleCards.map((card) => (
             <MatchCard
               key={card.id}
               name={card.name}
               isSelected={selectedCards.includes(card.id)}
-              isMatched={matchedPairs.includes(card.pairId)}
+              isMatched={matchedPairIds.includes(card.pairId)}
               isCorrect={correctCards.includes(card.id)}
               isIncorrect={incorrectCards.includes(card.id)}
               onClick={() => handleCardClick(card.id)}
@@ -383,9 +220,9 @@ export const GameBoard = ({ onBackToHome, themeId, tierId, onSelectTier, onTierC
 
         <FeedbackDialog
           isOpen={showFeedback}
-          isCorrect={isCorrect}
-          verse={currentFeedback.verse}
-          note={currentFeedback.note}
+          isCorrect
+          verse={feedback.verse}
+          note={feedback.note}
           onContinue={handleContinue}
         />
       </div>
